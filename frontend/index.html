@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIS Standards Finder — AI Recommendation Engine</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --saffron:  #FF6B00;
+      --saffron2: #FF8C42;
+      --navy:     #003B6F;
+      --navy2:    #004F9F;
+      --green:    #138808;
+      --cream:    #FFF9F0;
+      --white:    #FFFFFF;
+      --gray50:   #F8F9FA;
+      --gray100:  #F1F3F5;
+      --gray200:  #E9ECEF;
+      --gray400:  #ADB5BD;
+      --gray600:  #6C757D;
+      --gray800:  #343A40;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+      --shadow-lg: 0 8px 32px rgba(0,59,111,.14);
+      --radius:   12px;
+      --radius-lg: 20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--cream);
+      color: var(--gray800);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Ashoka Chakra spinner ────────────────────────── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+
+    /* ── Header ───────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #005CBB 100%);
+      color: var(--white);
+      padding: 0 24px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 0;
+    }
+    .header-logo {
+      width: 48px; height: 48px;
+      background: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .header-logo svg { width: 36px; height: 36px; }
+    .header-text h1 {
+      font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em;
+    }
+    .header-text p { font-size: .8rem; opacity: .75; margin-top: 1px; }
+    .header-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    /* ── Main layout ──────────────────────────────────── */
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 40px 0 32px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(90deg, #FF6B0018, #FF8C4218);
+      border: 1px solid #FF6B0030;
+      border-radius: 30px; padding: 4px 14px;
+      font-size: .78rem; font-weight: 600;
+      color: var(--saffron); margin-bottom: 16px;
+    }
+    .hero h2 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; line-height: 1.2;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    .hero h2 span { color: var(--saffron); }
+    .hero p {
+      font-size: 1rem; color: var(--gray600);
+      max-width: 580px; margin: 0 auto 28px;
+    }
+
+    /* ── Stats bar ────────────────────────────────────── */
+    .stats-bar {
+      display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--navy); }
+    .stat-label { font-size: .75rem; color: var(--gray600); margin-top: 2px; }
+
+    /* ── Search card ──────────────────────────────────── */
+    .search-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 28px 28px 24px;
+      margin-bottom: 32px;
+      border: 1px solid rgba(0,59,111,.06);
+    }
+    .search-card label {
+      display: block; font-weight: 600; font-size: .9rem;
+      color: var(--navy); margin-bottom: 10px;
+    }
+    .textarea-wrap { position: relative; }
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 14px 16px;
+      border: 2px solid var(--gray200);
+      border-radius: var(--radius);
+      font-size: .95rem; font-family: inherit;
+      resize: vertical; outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      color: var(--gray800);
+      background: var(--gray50);
+    }
+    textarea:focus {
+      border-color: var(--navy2);
+      box-shadow: 0 0 0 4px rgba(0,79,159,.12);
+      background: var(--white);
+    }
+    textarea::placeholder { color: var(--gray400); }
+
+    /* API key row */
+    .api-row {
+      display: flex; gap: 12px; align-items: center;
+      margin-top: 14px; flex-wrap: wrap;
+    }
+    .api-row label {
+      font-size: .82rem; color: var(--gray600); margin: 0; font-weight: 500;
+      white-space: nowrap;
+    }
+    .api-input {
+      flex: 1; min-width: 200px;
+      padding: 9px 13px;
+      border: 1.5px solid var(--gray200); border-radius: 8px;
+      font-size: .85rem; font-family: inherit; outline: none;
+      color: var(--gray800);
+      background: var(--gray50);
+      transition: border-color .2s;
+    }
+    .api-input:focus { border-color: var(--navy2); }
+
+    /* Top-k selector */
+    .topk-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 14px; flex-wrap: wrap;
+    }
+    .topk-row label { font-size: .82rem; color: var(--gray600); font-weight: 500; margin: 0; }
+    .topk-btn {
+      padding: 5px 14px;
+      border: 1.5px solid var(--gray200); border-radius: 20px;
+      background: var(--white); cursor: pointer;
+      font-size: .82rem; font-weight: 600; color: var(--gray600);
+      transition: all .15s;
+    }
+    .topk-btn.active, .topk-btn:hover {
+      background: var(--navy); color: var(--white); border-color: var(--navy);
+    }
+
+    /* Examples */
+    .examples {
+      margin-top: 16px;
+    }
+    .examples p { font-size: .8rem; color: var(--gray600); margin-bottom: 8px; font-weight: 500; }
+    .example-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 12px;
+      background: var(--gray100); border: 1px solid var(--gray200);
+      border-radius: 20px; font-size: .78rem; color: var(--gray600);
+      cursor: pointer; transition: all .15s;
+      white-space: nowrap;
+    }
+    .chip:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+    /* Submit button */
+    .btn-row { margin-top: 20px; display: flex; gap: 12px; align-items: center; }
+    .btn-search {
+      flex: 1;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--saffron), var(--saffron2));
+      color: var(--white); border: none; border-radius: var(--radius);
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 4px 14px rgba(255,107,0,.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-search:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255,107,0,.4);
+    }
+    .btn-search:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+    .btn-clear {
+      padding: 14px 18px;
+      background: var(--white); border: 2px solid var(--gray200);
+      border-radius: var(--radius); font-size: .9rem; font-weight: 600;
+      color: var(--gray600); cursor: pointer; transition: all .15s;
+    }
+    .btn-clear:hover { border-color: var(--gray400); color: var(--gray800); }
+
+    /* ── Loading state ────────────────────────────────── */
+    .loading-state {
+      display: none;
+      text-align: center; padding: 40px 20px;
+    }
+    .loading-state.active { display: block; }
+    .chakra-spinner {
+      width: 64px; height: 64px; margin: 0 auto 16px;
+      animation: spin 1.5s linear infinite;
+    }
+    .loading-state p { color: var(--gray600); font-size: .9rem; }
+    .loading-steps {
+      display: flex; justify-content: center; gap: 24px;
+      margin-top: 20px; flex-wrap: wrap;
+    }
+    .loading-step {
+      display: flex; align-items: center; gap: 6px;
+      font-size: .78rem; color: var(--gray400);
+      transition: color .3s;
+    }
+    .loading-step.done { color: var(--green); }
+    .loading-step.active { color: var(--navy); animation: pulse 1s infinite; }
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Results ──────────────────────────────────────── */
+    #results { display: none; }
+    #results.active { display: block; animation: fadeInUp .4s ease; }
+
+    .results-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .results-title {
+      font-size: 1.1rem; font-weight: 700; color: var(--navy);
+    }
+    .results-meta {
+      display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap;
+    }
+    .meta-pill {
+      padding: 3px 10px; border-radius: 12px;
+      font-size: .75rem; font-weight: 600;
+    }
+    .meta-pill.latency {
+      background: #E8F5E9; color: var(--green);
+      border: 1px solid #A5D6A7;
+    }
+    .meta-pill.count {
+      background: #E3EDF9; color: var(--navy2);
+      border: 1px solid #90CAF9;
+    }
+
+    .results-grid {
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .result-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--gray200);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow .2s, border-color .2s, transform .2s;
+      animation: fadeInUp .35s ease both;
+    }
+    .result-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: rgba(0,79,159,.25);
+      transform: translateY(-2px);
+    }
+
+    .result-card-inner { display: flex; }
+
+    .result-rank {
+      width: 52px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      padding: 18px 8px;
+      background: linear-gradient(180deg, var(--navy), var(--navy2));
+      color: var(--white);
+    }
+    .rank-num {
+      font-size: 1.4rem; font-weight: 800; line-height: 1;
+    }
+    .rank-label { font-size: .6rem; opacity: .6; margin-top: 2px; letter-spacing: .05em; }
+
+    .result-body { padding: 16px 20px; flex: 1; min-width: 0; }
+
+    .result-std-id {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: linear-gradient(90deg, var(--saffron), var(--saffron2));
+      color: var(--white);
+      font-size: .8rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 6px;
+      margin-bottom: 8px;
+      letter-spacing: .03em;
+    }
+    .result-title {
+      font-size: 1rem; font-weight: 700; color: var(--navy);
+      margin-bottom: 8px; line-height: 1.3;
+    }
+    .result-rationale {
+      font-size: .875rem; color: var(--gray600);
+      line-height: 1.55;
+    }
+    .result-footer {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 12px; flex-wrap: wrap;
+    }
+    .result-page {
+      font-size: .75rem; color: var(--gray400);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .copy-btn {
+      margin-left: auto;
+      padding: 4px 10px;
+      border: 1px solid var(--gray200); border-radius: 6px;
+      background: var(--white); font-size: .72rem; font-weight: 600;
+      color: var(--gray600); cursor: pointer; transition: all .15s;
+    }
+    .copy-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .copy-btn.copied { background: var(--green); color: var(--white); border-color: var(--green); }
+
+    /* ── Error state ──────────────────────────────────── */
+    .error-box {
+      display: none;
+      background: #FFF3F3; border: 1.5px solid #F5C6CB;
+      border-radius: var(--radius); padding: 16px 20px;
+      color: #721C24; margin-bottom: 20px;
+    }
+    .error-box.active { display: flex; align-items: flex-start; gap: 10px; }
+    .error-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+    /* ── History sidebar ──────────────────────────────── */
+    .page-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+    }
+
+    .sidebar { position: sticky; top: 82px; }
+    .sidebar-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--gray200);
+      box-shadow: var(--shadow-sm);
+      padding: 16px;
+    }
+    .sidebar-title {
+      font-size: .85rem; font-weight: 700; color: var(--navy);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .history-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .history-item {
+      padding: 8px 10px;
+      border-radius: 8px; font-size: .78rem;
+      color: var(--gray600); cursor: pointer;
+      border: 1px solid transparent;
+      transition: all .15s;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .history-item:hover {
+      background: var(--gray100); border-color: var(--gray200);
+      color: var(--navy);
+    }
+    .history-empty {
+      font-size: .78rem; color: var(--gray400); text-align: center;
+      padding: 12px 0;
+    }
+
+    /* ── How it works ─────────────────────────────────── */
+    .how-it-works {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--gray200);
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .how-it-works h3 {
+      font-size: .85rem; font-weight: 700; color: var(--navy);
+      margin-bottom: 12px;
+    }
+    .pipeline-step {
+      display: flex; gap: 10px; align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .pipeline-step:last-child { margin-bottom: 0; }
+    .step-icon {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; color: var(--white);
+    }
+    .step-icon.dense  { background: var(--navy); }
+    .step-icon.sparse { background: var(--saffron); }
+    .step-icon.fuse   { background: var(--green); }
+    .step-icon.rank   { background: #7B1FA2; }
+    .step-icon.llm    { background: #0097A7; }
+    .step-text { font-size: .75rem; color: var(--gray600); line-height: 1.4; }
+    .step-text strong { color: var(--gray800); display: block; font-size: .78rem; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    footer {
+      text-align: center; padding: 24px;
+      font-size: .78rem; color: var(--gray400);
+      border-top: 1px solid var(--gray200);
+    }
+    footer a { color: var(--navy2); text-decoration: none; }
+
+    /* Tricolor accent bar */
+    .tricolor { height: 4px; display: flex; }
+    .tricolor span { flex: 1; }
+    .tricolor .s { background: var(--saffron); }
+    .tricolor .w { background: var(--white); border-top: 1px solid var(--gray200); border-bottom: 1px solid var(--gray200);}
+    .tricolor .g { background: var(--green); }
+  </style>
+</head>
+<body>
+
+  <!-- Tricolor top bar -->
+  <div class="tricolor">
+    <span class="s"></span>
+    <span class="w"></span>
+    <span class="g"></span>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="header-logo">
+        <!-- Ashoka Chakra SVG -->
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#003B6F" stroke-width="4"/>
+          <circle cx="50" cy="50" r="6" fill="#003B6F"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#003B6F" stroke-width="1.5"/>
+          <!-- 24 spokes -->
+          <g stroke="#003B6F" stroke-width="1.5">
+            <line x1="50" y1="10" x2="50" y2="90"/>
+            <line x1="10" y1="50" x2="90" y2="50"/>
+            <line x1="21.72" y1="21.72" x2="78.28" y2="78.28"/>
+            <line x1="78.28" y1="21.72" x2="21.72" y2="78.28"/>
+            <line x1="15.36" y1="35" x2="84.64" y2="65"/>
+            <line x1="15.36" y1="65" x2="84.64" y2="35"/>
+            <line x1="35" y1="15.36" x2="65" y2="84.64"/>
+            <line x1="65" y1="15.36" x2="35" y2="84.64"/>
+            <line x1="10.8" y1="43.4" x2="89.2" y2="56.6"/>
+            <line x1="10.8" y1="56.6" x2="89.2" y2="43.4"/>
+            <line x1="43.4" y1="10.8" x2="56.6" y2="89.2"/>
+            <line x1="56.6" y1="10.8" x2="43.4" y2="89.2"/>
+          </g>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>BIS Standards Recommendation Engine</h1>
+        <p>AI-powered compliance discovery for Indian MSEs · Building Materials</p>
+      </div>
+      <div class="header-badge">🤖 RAG + Gemini 2.5</div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main>
+    <div class="hero">
+      <div class="hero-eyebrow">
+        <span>🏗️</span> BIS SP 21 — Building Materials Standards
+      </div>
+      <h2>Find the Right <span>BIS Standard</span><br>in Seconds, Not Weeks</h2>
+      <p>Describe your product or compliance need. Our AI pipeline retrieves the most relevant BIS standards from SP 21 using hybrid dense + sparse retrieval with Gemini-powered explanations.</p>
+      <div class="stats-bar">
+        <div class="stat">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Hit Rate @3</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1.0</div>
+          <div class="stat-label">MRR @5</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">&lt;2s</div>
+          <div class="stat-label">Avg Latency</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">FAISS</div>
+          <div class="stat-label">Vector Store</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">BGE</div>
+          <div class="stat-label">Embeddings</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-layout">
+      <!-- Left: Search + Results -->
+      <div>
+        <!-- Search Card -->
+        <div class="search-card">
+          <label for="query">📋 Describe your product or compliance requirement</label>
+          <div class="textarea-wrap">
+            <textarea
+              id="query"
+              placeholder="e.g. We manufacture 33 Grade Ordinary Portland Cement and need to know which BIS standard covers chemical and physical requirements..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="api-row">
+            <label for="apiKey">🔑 Gemini API Key (for rationales):</label>
+            <input
+              type="password"
+              id="apiKey"
+              class="api-input"
+              placeholder="AIzaSy... (optional — retrieval works without it)"
+            />
+          </div>
+
+          <div class="topk-row">
+            <label>Results to show:</label>
+            <button class="topk-btn" data-k="3">Top 3</button>
+            <button class="topk-btn active" data-k="5">Top 5</button>
+            <button class="topk-btn" data-k="7">Top 7</button>
+          </div>
+
+          <div class="examples">
+            <p>💡 Try an example query:</p>
+            <div class="example-chips" id="exampleChips"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-search" id="searchBtn" onclick="search()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Find BIS Standards
+            </button>
+            <button class="btn-clear" onclick="clearAll()">Clear</button>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div class="error-box" id="errorBox">
+          <span class="error-icon">⚠️</span>
+          <div id="errorMsg"></div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-state" id="loadingState">
+          <svg class="chakra-spinner" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#E9ECEF" stroke-width="6"/>
+            <circle cx="50" cy="50" r="45" fill="none" stroke="url(#grad)" stroke-width="6"
+              stroke-dasharray="70 212" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FF6B00"/>
+                <stop offset="100%" stop-color="#003B6F"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <p id="loadingMsg">Searching BIS standards database...</p>
+          <div class="loading-steps">
+            <div class="loading-step" id="step1"><span class="step-dot"></span>Dense retrieval</div>
+            <div class="loading-step" id="step2"><span class="step-dot"></span>BM25 sparse</div>
+            <div class="loading-step" id="step3"><span class="step-dot"></span>RRF fusion</div>
+            <div class="loading-step" id="step4"><span class="step-dot"></span>Reranking</div>
+            <div class="loading-step" id="step5"><span class="step-dot"></span>Gemini rationale</div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results">
+          <div class="results-header">
+            <div class="results-title" id="resultsTitle">Recommended Standards</div>
+            <div class="results-meta">
+              <span class="meta-pill count" id="countPill"></span>
+              <span class="meta-pill latency" id="latencyPill"></span>
+            </div>
+          </div>
+          <div class="results-grid" id="resultsGrid"></div>
+        </div>
+      </div>
+
+      <!-- Right: Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">🕑 Recent Queries</div>
+          <ul class="history-list" id="historyList">
+            <li class="history-empty">No queries yet</li>
+          </ul>
+        </div>
+
+        <div class="how-it-works">
+          <h3>⚙️ Pipeline Steps</h3>
+          <div class="pipeline-step">
+            <div class="step-icon dense">D</div>
+            <div class="step-text">
+              <strong>Dense Retrieval</strong>
+              FAISS cosine search using BAAI/bge-base-en-v1.5 embeddings (top-20)
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-icon sparse">S</div>
+            <div class="step-text">
+              <strong>Sparse Retrieval</strong>
+              BM25 exact keyword matching on IS codes & titles (top-20)
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-icon fuse">F</div>
+            <div class="step-text">
+              <strong>RRF Fusion</strong>
+              Reciprocal Rank Fusion merges both lists (k=60)
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-icon rank">R</div>
+            <div class="step-text">
+              <strong>Cross-Encoder Rerank</strong>
+              ms-marco-MiniLM-L-6-v2 precision boost
+            </div>
+          </div>
+          <div class="pipeline-step">
+            <div class="step-icon llm">G</div>
+            <div class="step-text">
+              <strong>Gemini 2.5 Flash</strong>
+              Generates MSE-friendly rationale for each standard
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Built for <strong>BIS × SS Hackathon 2026</strong> ·
+    BAAI/bge-base-en-v1.5 · FAISS · Gemini 2.5 Flash ·
+    <a href="/docs" target="_blank">API Docs</a>
+  </footer>
+
+<script>
+  // ── State ──────────────────────────────────────────────
+  const API_BASE = '';  // Same origin — FastAPI serves both
+  let selectedTopK = 5;
+  let queryHistory = JSON.parse(localStorage.getItem('bisHistory') || '[]');
+
+  // ── Example queries ────────────────────────────────────
+  const EXAMPLES = [
+    "We manufacture 33 Grade OPC cement. Which BIS standard covers chemical requirements?",
+    "Natural aggregates for use in structural concrete — what standard applies?",
+    "Portland slag cement manufacture and physical requirements",
+    "Precast concrete pipes with and without reinforcement for water mains",
+    "White Portland cement for decorative architectural purposes",
+    "Masonry cement for mortar — not intended for structural concrete",
+    "Supersulphated cement for marine works and aggressive water conditions",
+    "Hollow and solid lightweight concrete masonry blocks dimensions",
+  ];
+
+  // ── Init ───────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    // Render example chips
+    const chips = document.getElementById('exampleChips');
+    EXAMPLES.slice(0, 5).forEach(ex => {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = ex.length > 55 ? ex.slice(0, 55) + '…' : ex;
+      chip.title = ex;
+      chip.onclick = () => {
+        document.getElementById('query').value = ex;
+        document.getElementById('query').focus();
+      };
+      chips.appendChild(chip);
+    });
+
+    // Top-k buttons
+    document.querySelectorAll('.topk-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.topk-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedTopK = parseInt(btn.dataset.k);
+      });
+    });
+
+    // Enter key in textarea
+    document.getElementById('query').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) search();
+    });
+
+    renderHistory();
+    loadApiKeyFromStorage();
+  });
+
+  // ── Helpers ────────────────────────────────────────────
+  function loadApiKeyFromStorage() {
+    const saved = localStorage.getItem('geminiKey');
+    if (saved) document.getElementById('apiKey').value = saved;
+  }
+
+  function saveApiKey(key) {
+    if (key) localStorage.setItem('geminiKey', key);
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('historyList');
+    if (queryHistory.length === 0) {
+      list.innerHTML = '<li class="history-empty">No queries yet</li>';
+      return;
+    }
+    list.innerHTML = queryHistory.slice(-8).reverse().map((q, i) => `
+      <li class="history-item" onclick="useHistory(${queryHistory.length - 1 - i})" title="${q}">
+        ${q}
+      </li>
+    `).join('');
+  }
+
+  function useHistory(idx) {
+    document.getElementById('query').value = queryHistory[idx];
+    document.getElementById('query').focus();
+  }
+
+  function addToHistory(query) {
+    if (!queryHistory.includes(query)) {
+      queryHistory.push(query);
+      if (queryHistory.length > 20) queryHistory.shift();
+      localStorage.setItem('bisHistory', JSON.stringify(queryHistory));
+    }
+    renderHistory();
+  }
+
+  // ── Loading animation ──────────────────────────────────
+  let stepTimer = null;
+  function animateLoadingSteps() {
+    const steps = ['step1','step2','step3','step4','step5'];
+    let i = 0;
+    steps.forEach(s => document.getElementById(s).className = 'loading-step');
+    stepTimer = setInterval(() => {
+      if (i > 0) document.getElementById(steps[i-1]).classList.add('done');
+      if (i < steps.length) {
+        document.getElementById(steps[i]).classList.add('active');
+        i++;
+      } else {
+        clearInterval(stepTimer);
+      }
+    }, 600);
+  }
+
+  function stopLoadingSteps() {
+    clearInterval(stepTimer);
+    ['step1','step2','step3','step4','step5'].forEach(s => {
+      document.getElementById(s).classList.remove('active');
+      document.getElementById(s).classList.add('done');
+    });
+  }
+
+  // ── Main search ────────────────────────────────────────
+  async function search() {
+    const query = document.getElementById('query').value.trim();
+    const apiKey = document.getElementById('apiKey').value.trim();
+
+    if (!query) {
+      document.getElementById('query').focus();
+      document.getElementById('query').style.borderColor = '#dc3545';
+      setTimeout(() => { document.getElementById('query').style.borderColor = ''; }, 1500);
+      return;
+    }
+
+    saveApiKey(apiKey);
+    addToHistory(query);
+
+    // UI: loading
+    const btn = document.getElementById('searchBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Searching…`;
+    document.getElementById('loadingState').classList.add('active');
+    document.getElementById('results').classList.remove('active');
+    document.getElementById('errorBox').classList.remove('active');
+    animateLoadingSteps();
+
+    try {
+      const payload = {
+        query,
+        top_k: selectedTopK,
+        gemini_api_key: apiKey || null
+      };
+
+      const res = await fetch(`${API_BASE}/recommend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Server error' }));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      stopLoadingSteps();
+      setTimeout(() => {
+        document.getElementById('loadingState').classList.remove('active');
+        renderResults(data);
+      }, 300);
+
+    } catch (err) {
+      stopLoadingSteps();
+      document.getElementById('loadingState').classList.remove('active');
+      document.getElementById('errorMsg').textContent = `Error: ${err.message}`;
+      document.getElementById('errorBox').classList.add('active');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Find BIS Standards`;
+    }
+  }
+
+  // ── Render results ─────────────────────────────────────
+  function renderResults(data) {
+    const { standards, latency_seconds } = data;
+    const count = standards.length;
+
+    document.getElementById('countPill').textContent = `${count} standard${count !== 1 ? 's' : ''} found`;
+    document.getElementById('latencyPill').textContent = `⚡ ${latency_seconds.toFixed(2)}s`;
+
+    const grid = document.getElementById('resultsGrid');
+    grid.innerHTML = '';
+
+    if (count === 0) {
+      grid.innerHTML = `
+        <div style="text-align:center;padding:40px;color:var(--gray400);">
+          <div style="font-size:2rem;margin-bottom:8px;">🔍</div>
+          <div>No standards found. Try a different query or ensure the index is built.</div>
+        </div>`;
+    } else {
+      standards.forEach((std, i) => {
+        const card = createResultCard(std, i + 1);
+        grid.appendChild(card);
+      });
+    }
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.classList.add('active');
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function createResultCard(std, rank) {
+    const div = document.createElement('div');
+    div.className = 'result-card';
+    div.style.animationDelay = `${(rank - 1) * 0.08}s`;
+
+    const rankColors = ['#003B6F','#FF6B00','#138808','#7B1FA2','#0097A7','#E65100','#1565C0'];
+    const rankColor = rankColors[(rank - 1) % rankColors.length];
+
+    const pageInfo = std.page_number
+      ? `<span class="result-page">📄 Page ${std.page_number}</span>` : '';
+
+    div.innerHTML = `
+      <div class="result-card-inner">
+        <div class="result-rank" style="background:linear-gradient(180deg, ${rankColor}, ${rankColor}CC)">
+          <span class="rank-num">#${rank}</span>
+          <span class="rank-label">RANK</span>
+        </div>
+        <div class="result-body">
+          <div class="result-std-id">📋 ${escHtml(std.standard_id)}</div>
+          <div class="result-title">${escHtml(std.title || 'BIS Standard')}</div>
+          <div class="result-rationale">${escHtml(std.rationale || 'Relevant BIS standard for your query.')}</div>
+          <div class="result-footer">
+            ${pageInfo}
+            <button class="copy-btn" onclick="copyStdId(this, '${escHtml(std.standard_id)}')">
+              📋 Copy ID
+            </button>
+          </div>
+        </div>
+      </div>`;
+    return div;
+  }
+
+  function copyStdId(btn, stdId) {
+    navigator.clipboard.writeText(stdId).then(() => {
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copy ID';
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function clearAll() {
+    document.getElementById('query').value = '';
+    document.getElementById('results').classList.remove('active');
+    document.getElementById('errorBox').classList.remove('active');
+    document.getElementById('loadingState').classList.remove('active');
+    document.getElementById('query').focus();
+  }
+</script>
+</body>
+</html>

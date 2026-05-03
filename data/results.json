@@ -1,0 +1,85 @@
+[
+  {
+    "id": "PUB-01",
+    "retrieved_standards": [
+      "IS 269: 1989",
+      "IS 8112: 1989"
+    ],
+    "latency_seconds": 17.371
+  },
+  {
+    "id": "PUB-02",
+    "retrieved_standards": [
+      "IS 383: 1970",
+      "IS 3068: 1986",
+      "IS 6579: 1981",
+      "IS 1195: 2002"
+    ],
+    "latency_seconds": 1.203
+  },
+  {
+    "id": "PUB-03",
+    "retrieved_standards": [
+      "IS 458: 2003"
+    ],
+    "latency_seconds": 1.196
+  },
+  {
+    "id": "PUB-04",
+    "retrieved_standards": [
+      "IS 2185 (Part 2): 1983",
+      "IS 2185 (Part 1): 1979"
+    ],
+    "latency_seconds": 1.167
+  },
+  {
+    "id": "PUB-05",
+    "retrieved_standards": [
+      "IS 1626: 1984",
+      "IS 14871: 2000",
+      "IS 459: 1992"
+    ],
+    "latency_seconds": 1.206
+  },
+  {
+    "id": "PUB-06",
+    "retrieved_standards": [
+      "IS 455: 1989",
+      "IS 269: 1989",
+      "IS 8112: 1989"
+    ],
+    "latency_seconds": 1.213
+  },
+  {
+    "id": "PUB-07",
+    "retrieved_standards": [
+      "IS 1489 (Part 2): 1991"
+    ],
+    "latency_seconds": 1.199
+  },
+  {
+    "id": "PUB-08",
+    "retrieved_standards": [
+      "IS 3466: 1988",
+      "IS 12440: 1988",
+      "IS 2116: 1980"
+    ],
+    "latency_seconds": 1.267
+  },
+  {
+    "id": "PUB-09",
+    "retrieved_standards": [
+      "IS 6909: 1990",
+      "IS 12330: 1988"
+    ],
+    "latency_seconds": 2.271
+  },
+  {
+    "id": "PUB-10",
+    "retrieved_standards": [
+      "IS 8042: 1989",
+      "IS 8112: 1989"
+    ],
+    "latency_seconds": 2.53
+  }
+]

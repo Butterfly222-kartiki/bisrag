@@ -1,0 +1,357 @@
+"""
+BIS RAG Retriever — Updated for faster indexing + lightweight reranker.
+
+EMBEDDING_MODE options:
+    "local_fast"  -> BAAI/bge-small-en-v1.5  (384-dim, ~3x faster, ~1% quality drop)
+    "local_large" -> BAAI/bge-large-en-v1.5  (1024-dim, original, slowest)
+    "hf_api"      -> HuggingFace Inference API (no local compute, needs HF_API_KEY)
+
+RERANKER_MODE options:
+    "local_small" -> cross-encoder/ms-marco-MiniLM-L-6-v2  (fast, ~50MB, good enough)
+    "local_large" -> BAAI/bge-reranker-large                (original, slow, best)
+    "groq"        -> Groq LLM used as reranker              (no local model at all)
+    "none"        -> skip reranking entirely                 (fastest, lower quality)
+"""
+
+import os
+import json
+import pickle
+import re
+import time
+import numpy as np
+from pathlib import Path
+from typing import List, Dict, Any, Tuple, Optional
+
+from rank_bm25 import BM25Okapi
+import faiss
+
+
+# ─────────────────────────────────────────────
+# CHANGE THIS TO SWITCH EMBEDDING MODE
+# ─────────────────────────────────────────────
+
+EMBEDDING_MODE = "local_fast"   # "local_fast" | "local_large" | "hf_api"
+
+EMBED_MODELS = {
+    "local_fast":  "BAAI/bge-small-en-v1.5",   # 384-dim, ~3x faster, ~1% quality drop
+    "local_large": "BAAI/bge-large-en-v1.5",   # 1024-dim, original, slowest
+    "hf_api":      "BAAI/bge-large-en-v1.5",   # same quality, runs on HF servers
+}
+
+EMBED_MODEL_NAME = EMBED_MODELS[EMBEDDING_MODE]
+
+# ── Reranker mode ──────────────────────────────────────────────────────────────
+RERANKER_MODE = "local_small"   # "local_small" | "local_large" | "groq" | "none"
+
+RERANKER_MODELS = {
+    "local_small": "cross-encoder/ms-marco-MiniLM-L-6-v2",  # ~50MB, fast, good enough
+    "local_large": "BAAI/bge-reranker-large",               # original, slow, best
+}
+
+# HuggingFace Inference API key - only needed if EMBEDDING_MODE = "hf_api"
+# Get free key at https://huggingface.co/settings/tokens
+HF_API_KEY = os.environ.get("HF_API_KEY", "")
+
+INDEX_DIR        = Path("data/index")
+FAISS_INDEX_FILE = INDEX_DIR / "faiss.index"
+METADATA_FILE    = INDEX_DIR / "metadata.pkl"
+BM25_FILE        = INDEX_DIR / "bm25.pkl"
+
+BGE_QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
+
+
+# ─────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────
+
+def _tokenize(text: str) -> List[str]:
+    return re.findall(r'\b\w+\b', text.lower())
+
+
+# ─────────────────────────────────────────────
+# HF Inference API encoder
+# ─────────────────────────────────────────────
+
+def encode_with_hf_api(
+    texts: List[str],
+    model_id: str = "BAAI/bge-large-en-v1.5",
+    api_key: str = "",
+    batch_size: int = 64,
+) -> np.ndarray:
+    """
+    Encode texts using HuggingFace Inference API in batches.
+    Free tier: ~1000 requests/day. Each request = one batch of 64 texts.
+    At 5944 child chunks / 64 per batch = ~93 API calls total.
+    """
+    import requests
+
+    api_key = api_key or HF_API_KEY
+    if not api_key:
+        raise ValueError(
+            "HF_API_KEY not set. Get a free key at https://huggingface.co/settings/tokens "
+            "and set env var HF_API_KEY, or switch EMBEDDING_MODE to 'local_fast'."
+        )
+
+    url = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{model_id}"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    all_embeddings = []
+    total = len(texts)
+    total_batches = (total + batch_size - 1) // batch_size
+    print(f"[Retriever] HF API encoding {total} texts ({total_batches} batches)...")
+
+    for i in range(0, total, batch_size):
+        batch = texts[i: i + batch_size]
+        for attempt in range(3):
+            try:
+                resp = requests.post(
+                    url,
+                    headers=headers,
+                    json={"inputs": batch, "options": {"wait_for_model": True}},
+                    timeout=60,
+                )
+                if resp.status_code == 200:
+                    batch_emb = np.array(resp.json(), dtype=np.float32)
+                    if batch_emb.ndim == 3:
+                        batch_emb = batch_emb[:, 0, :]  # CLS token pooling
+                    all_embeddings.append(batch_emb)
+                    print(f"  Batch {i // batch_size + 1}/{total_batches} done")
+                    break
+                elif resp.status_code == 503:
+                    wait = int(resp.json().get("estimated_time", 20))
+                    print(f"  Model loading on HF, waiting {wait}s...")
+                    time.sleep(wait)
+                else:
+                    raise RuntimeError(f"HF API {resp.status_code}: {resp.text[:200]}")
+            except Exception as e:
+                if attempt == 2:
+                    raise
+                print(f"  Attempt {attempt+1} failed ({e}), retrying in 5s...")
+                time.sleep(5)
+
+    embeddings = np.vstack(all_embeddings)
+    # L2 normalize for cosine / inner product FAISS search
+    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+    embeddings = embeddings / np.clip(norms, 1e-9, None)
+    return embeddings
+
+
+# ─────────────────────────────────────────────
+# Fix 7: Query expansion via Groq (unchanged)
+# ─────────────────────────────────────────────
+
+def expand_query_with_groq(query: str, groq_api_key: Optional[str] = None) -> str:
+    api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
+    if not api_key:
+        return query
+    try:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        system_prompt = (
+            "You are an expert in BIS (Bureau of Indian Standards) and Indian construction/manufacturing standards. "
+            "Given a user query about a product or material, output a single line of space-separated keywords "
+            "that expands the query with: relevant IS standard numbers, technical synonyms, abbreviations "
+            "(OPC, PPC, PSC, HAC, AAC, TMT, etc.), and related material/process terms. "
+            "Output ONLY the expanded keyword string. No explanation, no punctuation other than spaces."
+        )
+        response = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Expand this query for BIS standards retrieval: {query}"}
+            ],
+            max_tokens=120,
+            temperature=0.1
+        )
+        expansion = response.choices[0].message.content.strip()
+        expanded = f"{query} {expansion}"
+        print(f"[Retriever] Query expanded: {expanded[:120]}...")
+        return expanded
+    except Exception as e:
+        print(f"[Retriever] Groq query expansion failed ({e}). Using original query.")
+        return query
+
+
+# ─────────────────────────────────────────────
+# BISRetriever
+# ─────────────────────────────────────────────
+
+class BISRetriever:
+    def __init__(self, groq_api_key: Optional[str] = None):
+        self.embed_model = None
+        self.reranker    = None
+        self.faiss_index = None
+        self.bm25: Optional[BM25Okapi] = None
+        self.metadata: List[Dict]      = []
+        self.parent_map: Dict[str, Dict] = {}
+        self.groq_api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
+
+    # ── Encoding router ────────────────────────────────────────────────────────
+
+    def _encode(self, texts: List[str], is_query: bool = False) -> np.ndarray:
+        """
+        Route to local SentenceTransformer or HF Inference API.
+        is_query=True prepends BGE query prefix (query time only, not indexing).
+        """
+        if is_query:
+            texts = [BGE_QUERY_PREFIX + t for t in texts]
+
+        if EMBEDDING_MODE == "hf_api":
+            return encode_with_hf_api(texts, model_id=EMBED_MODEL_NAME)
+
+        # Local modes
+        if self.embed_model is None:
+            from sentence_transformers import SentenceTransformer
+            print(f"[Retriever] Loading embedding model: {EMBED_MODEL_NAME}")
+            self.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
+
+        batch_size = 64 if EMBEDDING_MODE == "local_fast" else 32
+        embeddings = self.embed_model.encode(
+            texts,
+            batch_size=batch_size,
+            show_progress_bar=True,
+            normalize_embeddings=True,
+        )
+        return np.array(embeddings, dtype=np.float32)
+
+    # ── Build Index ────────────────────────────────────────────────────────────
+
+    def build_index(self, chunks_data: Dict):
+        """Build FAISS + BM25 index from parsed chunks."""
+        parent_chunks: List[Dict] = chunks_data["parent_chunks"]
+        child_chunks:  List[Dict] = chunks_data["child_chunks"]
+
+        self.parent_map = {c["standard_id"]: c for c in parent_chunks}
+        index_chunks    = child_chunks if child_chunks else parent_chunks
+        self.metadata   = index_chunks
+
+        print(f"[Retriever] Indexing {len(index_chunks)} chunks "
+              f"(mode={EMBEDDING_MODE}, model={EMBED_MODEL_NAME})")
+
+        corpus_texts     = [c["text"] for c in index_chunks]
+        tokenized_corpus = [_tokenize(t) for t in corpus_texts]
+        self.bm25        = BM25Okapi(tokenized_corpus)
+
+        print(f"[Retriever] Encoding {len(corpus_texts)} texts...")
+        embeddings = self._encode(corpus_texts, is_query=False)
+
+        dim = embeddings.shape[1]
+        self.faiss_index = faiss.IndexFlatIP(dim)
+        self.faiss_index.add(embeddings)
+
+        print(f"[Retriever] FAISS index built: {self.faiss_index.ntotal} vectors, dim={dim}")
+        self._save_index()
+
+    def _save_index(self):
+        INDEX_DIR.mkdir(parents=True, exist_ok=True)
+        faiss.write_index(self.faiss_index, str(FAISS_INDEX_FILE))
+        with open(METADATA_FILE, "wb") as f:
+            pickle.dump((self.metadata, self.parent_map), f)
+        with open(BM25_FILE, "wb") as f:
+            pickle.dump(self.bm25, f)
+        print(f"[Retriever] Index saved to {INDEX_DIR}")
+
+    def load_index(self):
+        if not FAISS_INDEX_FILE.exists():
+            raise FileNotFoundError(
+                f"FAISS index not found at {FAISS_INDEX_FILE}. Run build_index.py first."
+            )
+        print("[Retriever] Loading index from disk...")
+        self.faiss_index = faiss.read_index(str(FAISS_INDEX_FILE))
+        with open(METADATA_FILE, "rb") as f:
+            self.metadata, self.parent_map = pickle.load(f)
+        with open(BM25_FILE, "rb") as f:
+            self.bm25 = pickle.load(f)
+        print(f"[Retriever] Loaded {self.faiss_index.ntotal} vectors, "
+              f"{len(self.metadata)} metadata entries.")
+
+    def _load_models_if_needed(self):
+        if RERANKER_MODE in ("local_small", "local_large") and self.reranker is None:
+            from sentence_transformers import CrossEncoder
+            model_name = RERANKER_MODELS[RERANKER_MODE]
+            print(f"[Retriever] Loading reranker: {model_name}")
+            self.reranker = CrossEncoder(model_name, max_length=512)
+
+    # ── Retrieval ──────────────────────────────────────────────────────────────
+
+    def _dense_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
+        query_embed = self._encode([query], is_query=True)
+        scores, indices = self.faiss_index.search(query_embed, top_k)
+        return list(zip(indices[0].tolist(), scores[0].tolist()))
+
+    def _sparse_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
+        expanded_query = expand_query_with_groq(query, self.groq_api_key)
+        tokens = _tokenize(expanded_query)
+        scores = self.bm25.get_scores(tokens)
+        top_indices = np.argsort(scores)[::-1][:top_k]
+        return [(int(i), float(scores[i])) for i in top_indices]
+
+    def _rrf_fusion(
+        self,
+        dense_results:  List[Tuple[int, float]],
+        sparse_results: List[Tuple[int, float]],
+        k: int = 60
+    ) -> List[Tuple[int, float]]:
+        scores: Dict[int, float] = {}
+        for rank, (idx, _) in enumerate(dense_results):
+            scores[idx] = scores.get(idx, 0.0) + 1.0 / (k + rank + 1)
+        for rank, (idx, _) in enumerate(sparse_results):
+            scores[idx] = scores.get(idx, 0.0) + 1.0 / (k + rank + 1)
+        return sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+    def _rerank(self, query: str, candidates: List[Dict], top_k: int = 5) -> List[Dict]:
+        if not candidates:
+            return candidates
+        pairs = [(query, c.get("parent_text", c["text"])) for c in candidates]
+        rerank_scores = self.reranker.predict(pairs)
+        scored = sorted(zip(rerank_scores, candidates), key=lambda x: x[0], reverse=True)
+        return [c for _, c in scored[:top_k]]
+
+    def retrieve(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        self._load_models_if_needed()
+
+        dense_res  = self._dense_retrieve(query, top_k=20)
+        sparse_res = self._sparse_retrieve(query, top_k=20)
+        fused      = self._rrf_fusion(dense_res, sparse_res)
+
+        candidates   = []
+        seen_indices = set()
+        for idx, score in fused[:20]:
+            if idx < 0 or idx in seen_indices:
+                continue
+            seen_indices.add(idx)
+            chunk = dict(self.metadata[idx])
+            chunk["rrf_score"] = score
+            candidates.append(chunk)
+
+        reranked = self._rerank(query, candidates, top_k=top_k * 2)
+
+        seen_ids = set()
+        results  = []
+        for chunk in reranked:
+            sid = chunk["standard_id"]
+            if sid in seen_ids:
+                continue
+            seen_ids.add(sid)
+            parent = self.parent_map.get(sid, chunk)
+            results.append({
+                "standard_id":  sid,
+                "title":        parent.get("title", chunk.get("title", "")),
+                "text":         parent.get("text",  chunk.get("text",  "")),
+                "page_number":  parent.get("page_number", chunk.get("page_number", 0)),
+            })
+            if len(results) >= top_k:
+                break
+
+        return results
+
+
+# ── Singleton ──────────────────────────────────────────────────────────────────
+
+_retriever_instance: Optional[BISRetriever] = None
+
+def get_retriever() -> BISRetriever:
+    global _retriever_instance
+    if _retriever_instance is None:
+        _retriever_instance = BISRetriever()
+        _retriever_instance.load_index()
+    return _retriever_instance
