@@ -47,13 +47,16 @@ class BISRecommender:
         Full recommendation pipeline: retrieval + rationale generation.
         Returns list of dicts with standard_id, title, rationale, page_number.
         """
+        import time as _time
         self._ensure_loaded()
         standards = self.retriever.retrieve(query, top_k=top_k)
+        _t = _time.perf_counter()
         standards_with_rationale = generate_rationales(
             query=query,
             standards=standards,
-            api_key=self.groq_api_key   # Groq handles both retrieval and rationale generation
+            api_key=self.groq_api_key
         )
+        print(f"[TIMER] generate_rationales   : {(_time.perf_counter()-_t)*1000:.1f}ms")
         return standards_with_rationale
 
 

@@ -82,8 +82,8 @@ def generate_rationales(
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user",   "content": prompt}
             ],
-            max_tokens=1024,
-            temperature=0.2
+            max_tokens=512,   # was 1024 — rationales are 1-2 sentences each, 512 is plenty
+            temperature=0.0   # was 0.2 — deterministic = slightly faster token sampling
         )
 
         text = response.choices[0].message.content.strip()

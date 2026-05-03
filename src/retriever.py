@@ -408,21 +408,32 @@ class BISRetriever:
         return [c for _, c in scored[:top_k]]
 
     def retrieve(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        import time as _time
+        _t0 = _time.perf_counter()
+
         # Single merged Groq call: relevance check + query expansion together.
-        # Previously two sequential calls (~300-600ms saved per request).
         relevant, expanded_query, msg = check_relevance_and_expand_query(query, self.groq_api_key)
+        print(f"[TIMER] groq_relevance_expand : {(_time.perf_counter()-_t0)*1000:.1f}ms")
         if not relevant:
             raise IrrelevantQueryError(msg)
 
         self._load_models_if_needed()
 
+        _t = _time.perf_counter()
         dense_res  = self._dense_retrieve(expanded_query, top_k=20)
+        print(f"[TIMER] dense_retrieve        : {(_time.perf_counter()-_t)*1000:.1f}ms")
+
+        _t = _time.perf_counter()
         sparse_res = self._sparse_retrieve(expanded_query, top_k=20)
-        fused      = self._rrf_fusion(dense_res, sparse_res)
+        print(f"[TIMER] sparse_retrieve       : {(_time.perf_counter()-_t)*1000:.1f}ms")
+
+        _t = _time.perf_counter()
+        fused = self._rrf_fusion(dense_res, sparse_res)
+        print(f"[TIMER] rrf_fusion            : {(_time.perf_counter()-_t)*1000:.1f}ms")
 
         candidates   = []
         seen_indices = set()
-        for idx, score in fused[:20]:
+        for idx, score in fused[:5]:
             if idx < 0 or idx in seen_indices:
                 continue
             seen_indices.add(idx)
@@ -430,7 +441,10 @@ class BISRetriever:
             chunk["rrf_score"] = score
             candidates.append(chunk)
 
+        _t = _time.perf_counter()
         reranked = self._rerank(query, candidates, top_k=top_k * 2)
+        print(f"[TIMER] crossencoder_rerank   : {(_time.perf_counter()-_t)*1000:.1f}ms")
+        print(f"[TIMER] retrieve() TOTAL      : {(_time.perf_counter()-_t0)*1000:.1f}ms")
 
         seen_ids = set()
         results  = []

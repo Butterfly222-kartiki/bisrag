@@ -7,6 +7,8 @@ Irrelevant/casual query detection lives in src/retriever.py (IrrelevantQueryErro
 import os
 import sys
 import time
+import hashlib
+from functools import lru_cache
 from pathlib import Path
 from typing import List, Optional
 
@@ -42,6 +44,28 @@ def get_recommender() -> BISRecommender:
             groq_api_key=os.environ.get("GROQ_API_KEY", "")
         )
     return _recommender
+
+
+# ── Result cache ──────────────────────────────────────────────────────────────
+# Caches the last 256 unique (query, top_k) results in memory.
+# BIS standard lookups are highly repetitive (same product queries come up constantly).
+# A cache hit bypasses ALL computation — Groq, embedding, reranking — and returns in <5ms.
+
+@lru_cache(maxsize=256)
+def _cached_recommend(query: str, top_k: int, groq_key_hash: str) -> list:
+    """
+    groq_key_hash is included so the cache is invalidated if the API key changes,
+    but the actual key is never stored in cache memory.
+    """
+    recommender = get_recommender()
+    return recommender.recommend(query, top_k=top_k)
+
+
+def _recommend_with_cache(query: str, top_k: int, groq_api_key: str) -> list:
+    # Normalise query: lowercase + strip to improve cache hit rate for near-identical queries
+    normalised = query.lower().strip()
+    key_hash = hashlib.md5(groq_api_key.encode()).hexdigest()[:8] if groq_api_key else "nokey"
+    return _cached_recommend(normalised, top_k, key_hash)
 
 
 def _prewarm_blocking(recommender: BISRecommender):
@@ -133,7 +157,8 @@ async def recommend(req: QueryRequest):
             if recommender.retriever:
                 recommender.retriever.groq_api_key = req.groq_api_key
 
-        standards = recommender.recommend(query, top_k=req.top_k)
+        groq_key = req.groq_api_key or os.environ.get("GROQ_API_KEY", "")
+        standards = _recommend_with_cache(query, req.top_k, groq_key)
 
     except IrrelevantQueryError as e:
         # Casual/irrelevant query — return friendly message, no standards, no error status
