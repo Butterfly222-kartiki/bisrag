@@ -1,12 +1,11 @@
 """
 FastAPI Backend for BIS Standards Recommendation Engine.
 Serves the HTML frontend and provides the /recommend API endpoint.
-Updated to pass GROQ_API_KEY for query expansion (Fix 7).
+Irrelevant/casual query detection lives in src/retriever.py (IrrelevantQueryError).
 """
 
 import os
 import sys
-import json
 import time
 from pathlib import Path
 from typing import List, Optional
@@ -18,6 +17,7 @@ from pydantic import BaseModel
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.pipeline import BISRecommender
+from src.retriever import IrrelevantQueryError
 
 app = FastAPI(
     title="BIS Standards Recommendation Engine",
@@ -39,16 +39,16 @@ def get_recommender() -> BISRecommender:
     global _recommender
     if _recommender is None:
         _recommender = BISRecommender(
-            gemini_api_key=os.environ.get("GEMINI_API_KEY", ""),
             groq_api_key=os.environ.get("GROQ_API_KEY", "")
         )
     return _recommender
 
 
+# ── Models ────────────────────────────────────────────────────────────────────
+
 class QueryRequest(BaseModel):
     query: str
     top_k: int = 5
-    gemini_api_key: Optional[str] = None
     groq_api_key: Optional[str] = None
 
 
@@ -56,14 +56,17 @@ class StandardResult(BaseModel):
     standard_id: str
     title: str
     rationale: str
-    page_number: int
+    page_number: Optional[int] = 0
 
 
 class RecommendResponse(BaseModel):
     query: str
     standards: List[StandardResult]
     latency_seconds: float
+    message: Optional[str] = None   # set when query is irrelevant/casual
 
+
+# ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_frontend():
@@ -75,25 +78,36 @@ async def serve_frontend():
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "BIS RAG Engine v2 (fixed)"}
+    return {"status": "ok", "service": "BIS RAG Engine v2"}
 
 
 @app.post("/recommend", response_model=RecommendResponse)
 async def recommend(req: QueryRequest):
-    if not req.query.strip():
+    query = req.query.strip()
+
+    if not query:
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
 
     start = time.time()
     try:
         recommender = get_recommender()
-        if req.gemini_api_key:
-            recommender.gemini_api_key = req.gemini_api_key
+
+        # Inject per-request Groq key if provided
         if req.groq_api_key:
             recommender.groq_api_key = req.groq_api_key
             if recommender.retriever:
                 recommender.retriever.groq_api_key = req.groq_api_key
 
-        standards = recommender.recommend(req.query, top_k=req.top_k)
+        standards = recommender.recommend(query, top_k=req.top_k)
+
+    except IrrelevantQueryError as e:
+        # Casual/irrelevant query — return friendly message, no standards, no error status
+        return RecommendResponse(
+            query=query,
+            standards=[],
+            latency_seconds=round(time.time() - start, 3),
+            message=e.user_message
+        )
     except FileNotFoundError as e:
         raise HTTPException(status_code=503, detail=f"Index not built yet: {str(e)}")
     except Exception as e:
@@ -105,11 +119,11 @@ async def recommend(req: QueryRequest):
             standard_id=s.get("standard_id", ""),
             title=s.get("title", ""),
             rationale=s.get("rationale", ""),
-            page_number=s.get("page_number", 0)
+            page_number=s.get("page_number") or 0
         )
         for s in standards
     ]
-    return RecommendResponse(query=req.query, standards=results, latency_seconds=latency)
+    return RecommendResponse(query=query, standards=results, latency_seconds=latency)
 
 
 @app.post("/batch")
@@ -125,6 +139,8 @@ async def batch_recommend(queries: List[QueryRequest]):
                 "retrieved_standards": standard_ids,
                 "latency_seconds": round(time.time() - start, 3)
             })
+        except IrrelevantQueryError as e:
+            results.append({"query": req.query, "message": e.user_message, "retrieved_standards": []})
         except Exception as e:
             results.append({"query": req.query, "error": str(e)})
     return results

@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from src.retriever import BISRetriever, get_retriever
+from src.retriever import BISRetriever, get_retriever, IrrelevantQueryError  # noqa: F401
 from src.llm import generate_rationales
 
 CHUNKS_PATH = Path("data/chunks.json")
@@ -22,9 +22,8 @@ class BISRecommender:
     Handles index loading and query processing.
     """
 
-    def __init__(self, gemini_api_key: Optional[str] = None, groq_api_key: Optional[str] = None):
+    def __init__(self, groq_api_key: Optional[str] = None):
         self.retriever: Optional[BISRetriever] = None
-        self.gemini_api_key = gemini_api_key or os.environ.get("GEMINI_API_KEY", "")
         self.groq_api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
         self._loaded = False
 
@@ -53,7 +52,7 @@ class BISRecommender:
         standards_with_rationale = generate_rationales(
             query=query,
             standards=standards,
-            api_key=self.gemini_api_key
+            api_key=self.groq_api_key   # Groq handles both retrieval and rationale generation
         )
         return standards_with_rationale
 

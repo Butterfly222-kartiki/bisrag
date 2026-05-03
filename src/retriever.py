@@ -61,6 +61,117 @@ BGE_QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 
 # ─────────────────────────────────────────────
+# Irrelevant / casual query detection
+# ─────────────────────────────────────────────
+
+class IrrelevantQueryError(Exception):
+    """Raised when the query is casual, greeting, or unrelated to BIS standards."""
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.user_message = message
+
+
+# ── Minimal keyword fallback (used only when Groq key is absent) ───────────────
+
+_GREETINGS = {
+    "hi", "hello", "hey", "helo", "hii", "hiii", "howdy", "yo", "sup",
+    "good morning", "good afternoon", "good evening", "good night",
+    "greetings", "salutations", "namaste", "namaskar",
+}
+
+_DOMAIN_HINTS = {
+    "bis", "is", "standard", "cement", "steel", "pipe", "water", "concrete",
+    "quality", "product", "material", "specification", "manufacture", "rubber",
+    "textile", "food", "chemical", "paint", "wire", "cable", "brick", "tile",
+    "glass", "plastic", "wood", "timber", "copper", "aluminium", "aluminum",
+    "iron", "coal", "oil", "gas", "pressure", "safety", "weight", "dimension",
+    "mse", "factory", "industrial", "bureau", "indian", "national", "grade",
+    "class", "type", "requirement", "compressive", "tensile", "strength",
+}
+
+_NOT_RELEVANT_MSG = (
+    "I\'m specialized in finding **BIS Standards** for products and manufacturing. 🏭\n\n"
+    "Your query doesn\'t seem related to Indian Standards compliance. "
+    "Please describe your product or manufacturing requirement.\n\n"
+    "Example: *We manufacture OPC cement — which BIS standard applies?*"
+)
+
+
+def _keyword_relevance_check(query: str) -> tuple[bool, str]:
+    """
+    Fast fallback check used when Groq key is unavailable.
+    Only catches obvious greetings and queries with zero domain keywords.
+    """
+    q = query.strip().lower()
+    q = re.sub(r"[!?.,\'\"]+$", "", q).strip()
+    if q in _GREETINGS:
+        return False, (
+            "👋 Hello! I\'m the **BIS Standards Finder**.\n\n"
+            "Describe your product or compliance requirement and I\'ll find "
+            "the relevant Indian Standards for you.\n\n"
+            "Example: *We manufacture OPC cement — which BIS standard applies?*"
+        )
+    words = q.split()
+    if not any(w in _DOMAIN_HINTS for w in words):
+        return False, _NOT_RELEVANT_MSG
+    return True, ""
+
+
+def check_query_relevance_with_groq(query: str, groq_api_key: Optional[str] = None) -> tuple[bool, str]:
+    """
+    Uses Groq LLM to decide if the query is relevant to BIS standards.
+    Returns (True, '') if relevant, (False, user_friendly_message) if not.
+    Falls back to keyword check if Groq key is missing or call fails.
+    """
+    api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
+    if not api_key:
+        return _keyword_relevance_check(query)
+
+    try:
+        from groq import Groq
+        client = Groq(api_key=api_key)
+        system_prompt = (
+            "You are a query classifier for a BIS (Bureau of Indian Standards) search engine "
+            "that helps Indian businesses find relevant IS standards for their products.\n\n"
+            "Classify if the user query is relevant to BIS/IS standards, product compliance, "
+            "manufacturing requirements, or material specifications.\n\n"
+            "Reply with ONLY one of:\n"
+            "RELEVANT\n"
+            "NOT_RELEVANT: <one short friendly sentence explaining you only handle BIS standards>"
+        )
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": query}
+            ],
+            max_tokens=60,
+            temperature=0.0
+        )
+        reply = response.choices[0].message.content.strip()
+
+        if reply.startswith("RELEVANT"):
+            return True, ""
+
+        # Extract the friendly message after "NOT_RELEVANT: "
+        if "NOT_RELEVANT" in reply:
+            parts = reply.split(":", 1)
+            groq_msg = parts[1].strip() if len(parts) > 1 else ""
+            user_msg = (
+                f"🏭 {groq_msg}\n\n"
+                "Try something like: *We manufacture steel pipes — which BIS standard applies?*"
+            ) if groq_msg else _NOT_RELEVANT_MSG
+            return False, user_msg
+
+        # Unexpected format — be permissive, let retrieval proceed
+        return True, ""
+
+    except Exception as e:
+        print(f"[Retriever] Groq relevance check failed ({e}). Using keyword fallback.")
+        return _keyword_relevance_check(query)
+
+
+# ─────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────
 
@@ -154,7 +265,7 @@ def expand_query_with_groq(query: str, groq_api_key: Optional[str] = None) -> st
             "Output ONLY the expanded keyword string. No explanation, no punctuation other than spaces."
         )
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Expand this query for BIS standards retrieval: {query}"}
@@ -307,6 +418,12 @@ class BISRetriever:
         return [c for _, c in scored[:top_k]]
 
     def retrieve(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+        # Guard: reject casual / irrelevant queries before any heavy computation
+        # Uses Groq LLM if key available, keyword fallback otherwise
+        relevant, msg = check_query_relevance_with_groq(query, self.groq_api_key)
+        if not relevant:
+            raise IrrelevantQueryError(msg)
+
         self._load_models_if_needed()
 
         dense_res  = self._dense_retrieve(query, top_k=20)
