@@ -2,8 +2,7 @@ __pycache__/
 *.pyc
 *.pyo
 .env
-data/index/
-data/chunks.json
+
 *.egg-info/
 .venv/
 venv/

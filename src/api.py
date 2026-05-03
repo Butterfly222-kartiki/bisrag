@@ -44,6 +44,41 @@ def get_recommender() -> BISRecommender:
     return _recommender
 
 
+def _prewarm_blocking(recommender: BISRecommender):
+    """Blocking helper: loads index + models. Called in a thread executor during startup."""
+    recommender._ensure_loaded()                          # loads FAISS index + metadata + BM25
+    recommender.retriever._load_models_if_needed()        # loads CrossEncoder reranker
+    # Also trigger embedding model load (lazy inside _encode)
+    if recommender.retriever.embed_model is None:
+        from sentence_transformers import SentenceTransformer
+        from src.retriever import EMBED_MODEL_NAME
+        recommender.retriever.embed_model = SentenceTransformer(EMBED_MODEL_NAME)
+        print(f"[Startup] Embedding model loaded: {EMBED_MODEL_NAME}")
+
+
+@app.on_event("startup")
+async def startup_prewarm():
+    """
+    Pre-warm the index and all local models at server startup.
+    Eliminates cold-start latency on the first real request:
+      - FAISS index + metadata loaded from disk into RAM
+      - Embedding model (SentenceTransformer) loaded into memory
+      - CrossEncoder reranker loaded into memory
+    Without this, the first request bears a ~3-10s one-time load penalty.
+    """
+    import asyncio
+    loop = asyncio.get_event_loop()
+    try:
+        print("[Startup] Pre-warming index and models...")
+        recommender = get_recommender()
+        # Run blocking I/O + model loads in a thread so we don't block the event loop
+        await loop.run_in_executor(None, _prewarm_blocking, recommender)
+        print("[Startup] Pre-warm complete — server ready.")
+    except Exception as e:
+        # Don't crash the server if index isn't built yet; just warn
+        print(f"[Startup] Pre-warm skipped ({e}). Run build_index.py first.")
+
+
 # ── Models ────────────────────────────────────────────────────────────────────
 
 class QueryRequest(BaseModel):

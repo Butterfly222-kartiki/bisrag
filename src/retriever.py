@@ -117,58 +117,84 @@ def _keyword_relevance_check(query: str) -> tuple[bool, str]:
     return True, ""
 
 
-def check_query_relevance_with_groq(query: str, groq_api_key: Optional[str] = None) -> tuple[bool, str]:
+def check_relevance_and_expand_query(query: str, groq_api_key: Optional[str] = None) -> tuple[bool, str, str]:
     """
-    Uses Groq LLM to decide if the query is relevant to BIS standards.
-    Returns (True, '') if relevant, (False, user_friendly_message) if not.
-    Falls back to keyword check if Groq key is missing or call fails.
+    Single Groq call that BOTH checks relevance AND expands the query.
+    Returns (is_relevant, expanded_query_or_empty, user_message_if_irrelevant).
+
+    Previously this was two sequential Groq calls:
+        1. check_query_relevance_with_groq()
+        2. expand_query_with_groq()
+    Merging them saves one full round-trip (~300–600 ms).
+
+    Falls back to keyword relevance check + no expansion if Groq key is missing or call fails.
     """
     api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
     if not api_key:
-        return _keyword_relevance_check(query)
+        relevant, msg = _keyword_relevance_check(query)
+        return relevant, query, msg
 
     try:
         from groq import Groq
         client = Groq(api_key=api_key)
+
         system_prompt = (
-            "You are a query classifier for a BIS (Bureau of Indian Standards) search engine "
+            "You are an assistant for a BIS (Bureau of Indian Standards) search engine "
             "that helps Indian businesses find relevant IS standards for their products.\n\n"
-            "Classify if the user query is relevant to BIS/IS standards, product compliance, "
-            "manufacturing requirements, or material specifications.\n\n"
-            "Reply with ONLY one of:\n"
-            "RELEVANT\n"
-            "NOT_RELEVANT: <one short friendly sentence explaining you only handle BIS standards>"
+            "Given a user query, do TWO things in ONE response:\n"
+            "1. Decide if the query is relevant to BIS/IS standards, product compliance, "
+            "manufacturing requirements, or material specifications.\n"
+            "2. If relevant, expand the query with: relevant IS standard numbers, technical "
+            "synonyms, abbreviations (OPC, PPC, PSC, HAC, AAC, TMT, etc.), and related "
+            "material/process terms.\n\n"
+            "Reply with ONLY valid JSON, no markdown, no extra text:\n"
+            "{\n"
+            '  "relevant": true,\n'
+            '  "expanded_query": "<original query> <space-separated expansion keywords>",\n'
+            '  "message": ""\n'
+            "}\n"
+            "OR if not relevant:\n"
+            "{\n"
+            '  "relevant": false,\n'
+            '  "expanded_query": "",\n'
+            '  "message": "<one short friendly sentence explaining you only handle BIS standards>"\n'
+            "}"
         )
+
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": query}
             ],
-            max_tokens=60,
+            max_tokens=160,
             temperature=0.0
         )
-        reply = response.choices[0].message.content.strip()
 
-        if reply.startswith("RELEVANT"):
-            return True, ""
+        import json as _json
+        text = response.choices[0].message.content.strip()
+        # Strip accidental markdown fences
+        text = re.sub(r'^```json\s*', '', text)
+        text = re.sub(r'\s*```$', '', text)
+        data = _json.loads(text)
 
-        # Extract the friendly message after "NOT_RELEVANT: "
-        if "NOT_RELEVANT" in reply:
-            parts = reply.split(":", 1)
-            groq_msg = parts[1].strip() if len(parts) > 1 else ""
+        if data.get("relevant", True):
+            expanded = data.get("expanded_query", "") or query
+            print(f"[Retriever] Combined check+expand: relevant=True, expanded={expanded[:100]}...")
+            return True, expanded, ""
+        else:
+            msg_raw = data.get("message", "")
             user_msg = (
-                f"🏭 {groq_msg}\n\n"
+                f"🏭 {msg_raw}\n\n"
                 "Try something like: *We manufacture steel pipes — which BIS standard applies?*"
-            ) if groq_msg else _NOT_RELEVANT_MSG
-            return False, user_msg
-
-        # Unexpected format — be permissive, let retrieval proceed
-        return True, ""
+            ) if msg_raw else _NOT_RELEVANT_MSG
+            print("[Retriever] Combined check+expand: relevant=False")
+            return False, "", user_msg
 
     except Exception as e:
-        print(f"[Retriever] Groq relevance check failed ({e}). Using keyword fallback.")
-        return _keyword_relevance_check(query)
+        print(f"[Retriever] Combined Groq call failed ({e}). Using keyword fallback + no expansion.")
+        relevant, msg = _keyword_relevance_check(query)
+        return relevant, query, msg
 
 
 # ─────────────────────────────────────────────
@@ -244,42 +270,6 @@ def encode_with_hf_api(
     norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
     embeddings = embeddings / np.clip(norms, 1e-9, None)
     return embeddings
-
-
-# ─────────────────────────────────────────────
-# Fix 7: Query expansion via Groq (unchanged)
-# ─────────────────────────────────────────────
-
-def expand_query_with_groq(query: str, groq_api_key: Optional[str] = None) -> str:
-    api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
-    if not api_key:
-        return query
-    try:
-        from groq import Groq
-        client = Groq(api_key=api_key)
-        system_prompt = (
-            "You are an expert in BIS (Bureau of Indian Standards) and Indian construction/manufacturing standards. "
-            "Given a user query about a product or material, output a single line of space-separated keywords "
-            "that expands the query with: relevant IS standard numbers, technical synonyms, abbreviations "
-            "(OPC, PPC, PSC, HAC, AAC, TMT, etc.), and related material/process terms. "
-            "Output ONLY the expanded keyword string. No explanation, no punctuation other than spaces."
-        )
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Expand this query for BIS standards retrieval: {query}"}
-            ],
-            max_tokens=120,
-            temperature=0.1
-        )
-        expansion = response.choices[0].message.content.strip()
-        expanded = f"{query} {expansion}"
-        print(f"[Retriever] Query expanded: {expanded[:120]}...")
-        return expanded
-    except Exception as e:
-        print(f"[Retriever] Groq query expansion failed ({e}). Using original query.")
-        return query
 
 
 # ─────────────────────────────────────────────
@@ -390,8 +380,8 @@ class BISRetriever:
         return list(zip(indices[0].tolist(), scores[0].tolist()))
 
     def _sparse_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
-        expanded_query = expand_query_with_groq(query, self.groq_api_key)
-        tokens = _tokenize(expanded_query)
+        # query is already expanded by check_relevance_and_expand_query() upstream
+        tokens = _tokenize(query)
         scores = self.bm25.get_scores(tokens)
         top_indices = np.argsort(scores)[::-1][:top_k]
         return [(int(i), float(scores[i])) for i in top_indices]
@@ -418,16 +408,16 @@ class BISRetriever:
         return [c for _, c in scored[:top_k]]
 
     def retrieve(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
-        # Guard: reject casual / irrelevant queries before any heavy computation
-        # Uses Groq LLM if key available, keyword fallback otherwise
-        relevant, msg = check_query_relevance_with_groq(query, self.groq_api_key)
+        # Single merged Groq call: relevance check + query expansion together.
+        # Previously two sequential calls (~300-600ms saved per request).
+        relevant, expanded_query, msg = check_relevance_and_expand_query(query, self.groq_api_key)
         if not relevant:
             raise IrrelevantQueryError(msg)
 
         self._load_models_if_needed()
 
-        dense_res  = self._dense_retrieve(query, top_k=20)
-        sparse_res = self._sparse_retrieve(query, top_k=20)
+        dense_res  = self._dense_retrieve(expanded_query, top_k=20)
+        sparse_res = self._sparse_retrieve(expanded_query, top_k=20)
         fused      = self._rrf_fusion(dense_res, sparse_res)
 
         candidates   = []
