@@ -11,13 +11,6 @@ This module is NOT in the hot path for query serving.  It runs once (or
 whenever the corpus changes) via build_index.py / pipeline.py, then the
 serialised files are loaded at server startup.
 
-Embedding modes (controlled by EMBEDDING_MODE constant):
-    "local_fast"  → BAAI/bge-small-en-v1.5  (384-dim, ~3× faster, ~1% quality drop)
-    "local_large" → BAAI/bge-large-en-v1.5  (1024-dim, original quality, slowest)
-    "hf_api"      → HuggingFace Inference API (no local GPU, needs HF_API_KEY)
-
-Reranker config lives in reranker.py — not here.
-
 Public surface used by retriever.py:
     EMBEDDING_MODE   — current embedding backend
     EMBED_MODEL_NAME — resolved model ID string
@@ -46,9 +39,9 @@ EMBEDDING_MODE = "local_fast"   # "local_fast" | "local_large" | "hf_api"
 
 # Maps each mode to its HuggingFace model ID.
 EMBED_MODELS = {
-    "local_fast":  "all-MiniLM-L6-v2",   # 384-dim, ~3× faster, ~1% quality drop
-    "local_large": "BAAI/bge-large-en-v1.5",   # 1024-dim, original quality
-    "hf_api":      "BAAI/bge-large-en-v1.5",   # same model, runs on HF servers
+    "local_fast":  "all-MiniLM-L6-v2",   
+    "local_large": "BAAI/bge-large-en-v1.5", 
+    "hf_api":      "BAAI/bge-large-en-v1.5",   
 }
 
 EMBED_MODEL_NAME = EMBED_MODELS[EMBEDDING_MODE]
@@ -129,14 +122,14 @@ def encode_with_hf_api(
                 )
                 if resp.status_code == 200:
                     batch_emb = np.array(resp.json(), dtype=np.float32)
-                    # Some model versions return (batch, 1, dim) — squeeze the CLS dim.
+                   
                     if batch_emb.ndim == 3:
                         batch_emb = batch_emb[:, 0, :]
                     all_embeddings.append(batch_emb)
                     print(f"  Batch {i // batch_size + 1}/{total_batches} done")
                     break
                 elif resp.status_code == 503:
-                    # Model is cold-starting on HF servers — wait and retry.
+                    
                     wait = int(resp.json().get("estimated_time", 20))
                     print(f"  Model loading on HF, waiting {wait}s...")
                     time.sleep(wait)
@@ -144,7 +137,7 @@ def encode_with_hf_api(
                     raise RuntimeError(f"HF API {resp.status_code}: {resp.text[:200]}")
             except Exception as e:
                 if attempt == 2:
-                    raise   # All retries exhausted — propagate the error.
+                    raise   
                 print(f"  Attempt {attempt + 1} failed ({e}), retrying in 5s...")
                 time.sleep(5)
 
@@ -156,7 +149,7 @@ def encode_with_hf_api(
 
 
 # ---------------------------------------------------------------------------
-# EmbeddingEncoder — thin wrapper that routes to local ST model or HF API.
+# EmbeddingEncoder
 # ---------------------------------------------------------------------------
 
 class EmbeddingEncoder:

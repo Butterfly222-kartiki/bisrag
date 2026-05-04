@@ -152,8 +152,8 @@ def generate_rationales(
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user",   "content": prompt},
             ],
-            max_tokens=2048,   # 2–3 sentences per standard; 2048 is safe for up to 10 standards
-            temperature=0.15,  # Slightly creative to avoid boilerplate, but still deterministic enough
+            max_tokens=2048,   
+            temperature=0.15,  
         )
 
         text = response.choices[0].message.content.strip()

@@ -22,7 +22,7 @@ class BISRecommender:
         self.groq_api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
         self._loaded = False
 
-        # ✅ store reranker flag
+        # ✅store reranker flag
         self.use_reranker = use_reranker
 
     def _ensure_loaded(self):

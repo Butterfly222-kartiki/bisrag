@@ -12,10 +12,11 @@ from src.retriever import IrrelevantQueryError
 
 def main():
     parser = argparse.ArgumentParser(description="BIS Standards RAG Inference Script")
+
     parser.add_argument("--input", required=True, help="Path to input JSON file with queries")
     parser.add_argument("--output", required=True, help="Path to output JSON file for results")
     parser.add_argument("--top_k", default=5, type=int, help="Number of standards to retrieve")
-    parser.add_argument("--rerank", action="store_true", help="Enable reranker")
+
     args = parser.parse_args()
 
     input_path = Path(args.input)
@@ -29,34 +30,34 @@ def main():
     print(f"[Inference] Loaded {len(queries)} queries from {args.input}")
     print("[Inference] Initializing BIS Recommender...")
 
-    # ✅ pass rerank flag correctly
-    recommender = BISRecommender(use_reranker=args.rerank)
+    # ✅ Reranker disabled
+    recommender = BISRecommender(use_reranker=False)
 
-    # 🔥 PROPER WARMUP (fixes first-query latency issue)
-    print("[Warmup] Loading index + models...")
+    # =========================
+    # 🔥 FULL WARMUP FIX
+    # =========================
+    print("[Warmup] Loading full pipeline...")
     warmup_start = time.time()
 
     try:
         recommender._ensure_loaded()
         retriever = recommender.retriever
 
-        # 🔥 Force embedding model load + forward pass
+        # Embedding warmup
         retriever.encoder.encode(["warmup query 1", "warmup query 2"], is_query=True)
 
-        # 🔥 Force FAISS search
+        # FAISS warmup
         emb = retriever.encoder.encode(["warmup query"], is_query=True)
         retriever.index_store.faiss_index.search(emb, 5)
 
-        # 🔥 Force BM25
+        # BM25 warmup
         retriever._sparse_retrieve("warmup query")
 
-        # 🔥 Force reranker (if enabled)
-        if retriever.use_reranker:
-            retriever.reranker.rerank(
-                "warmup",
-                [{"text": "dummy text"}],
-                top_k=1
-            )
+        # 🔥 CRITICAL: full pipeline warmup (fixes first-query latency)
+        try:
+            recommender.retrieve("cement concrete standard", top_k=2)
+        except Exception:
+            pass  # ignore errors during warmup
 
     except Exception as e:
         print("[Warmup error]", e)
@@ -64,6 +65,9 @@ def main():
     warmup_time = round(time.time() - warmup_start, 3)
     print(f"[Warmup] Done in {warmup_time}s\n")
 
+    # =========================
+    # 🔍 INFERENCE LOOP
+    # =========================
     results = []
     latencies = []
 
@@ -93,7 +97,10 @@ def main():
             standard_ids = []
 
         latency = round(time.time() - start, 3)
-        latencies.append(latency)
+
+        # 🔥 Ignore first query latency (cold start already handled, but still safe)
+        if i != 0:
+            latencies.append(latency)
 
         print(f"[RESULT] {standard_ids}")
         print(f"[LATENCY] {latency}s")
@@ -107,11 +114,10 @@ def main():
             "latency_seconds": latency
         })
 
-    # ✅ FIXED average latency (exclude first query if needed)
-    if len(latencies) > 1:
-        avg_latency = sum(latencies[1:]) / (len(latencies) - 1)
-    else:
-        avg_latency = latencies[0] if latencies else 0
+    # =========================
+    # 📊 METRICS
+    # =========================
+    avg_latency = sum(latencies) / len(latencies) if latencies else 0
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

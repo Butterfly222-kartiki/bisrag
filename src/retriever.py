@@ -1,3 +1,32 @@
+"""
+BIS Hybrid Retrieval Pipeline
+
+This module implements an optimized hybrid retrieval system for BIS (Bureau of Indian Standards)
+documents using a combination of dense and sparse retrieval techniques, followed by intelligent
+fusion and reranking.
+
+Key Features:
+- Query preprocessing with relevance filtering and expansion (LLM-assisted)
+- Hybrid retrieval:
+    • Dense retrieval using FAISS + embeddings
+    • Sparse retrieval using BM25
+- Reciprocal Rank Fusion (RRF) for combining retrieval results
+- Part-number aware filtering for standards (e.g., IS XXXX Part 1, Part 2)
+- Optional reranking layer for improved result relevance
+- Efficient deduplication and parent-document mapping
+- Detailed timing breakdown for performance monitoring
+
+Pipeline Overview:
+1. Query relevance check and expansion
+2. Dense retrieval (semantic similarity)
+3. Sparse retrieval (keyword matching)
+4. Fusion of results (RRF)
+5. Candidate construction with metadata enrichment
+6. Part-number based prioritization
+7. Deduplication and final result selection
+
+"""
+
 import os
 import re
 import time
@@ -10,7 +39,7 @@ from src.query_preprocessor import check_relevance_and_expand_query, IrrelevantQ
 from src.reranker import Reranker
 
 
-# ── Part-number helpers (zero latency, pure regex) ────────────────────────────
+# ── Part-number helpers  ────────────────────────────
 
 def extract_part_number(standard_id: str) -> Optional[int]:
     """
@@ -45,7 +74,6 @@ def extract_part_signal_from_query(query: str) -> Optional[int]:
         return roman.get(match.group(1).lower())
     return None
 
-# ──────────────────────────────────────────────────────────────────────────────
 
 
 class BISRetriever:
@@ -147,7 +175,7 @@ class BISRetriever:
             candidates.append(chunk)
         timings["candidate_build"] = time.time() - t5
 
-        # Step 6.5 — Part-number filtering (zero latency, pure regex)
+        # Step 6.5 — Part-number filtering 
         t_part = time.time()
         query_part = extract_part_signal_from_query(query)
         if query_part is not None:
@@ -190,7 +218,7 @@ class BISRetriever:
 
         timings["total"] = time.time() - t_total_start
 
-        # 🔥 PRINT TIMING BREAKDOWN
+        # PRINT TIMING BREAKDOWN
         print("\n⏱ TIMING BREAKDOWN:")
         for k, v in timings.items():
             print(f"{k:20s}: {v:.4f} sec")

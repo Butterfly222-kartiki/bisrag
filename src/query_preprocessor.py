@@ -11,54 +11,6 @@ Pipeline (in order):
                             fallback to avoid false rejections.
   4. Dual-query output    — returns BOTH the original (spelling-corrected)
                             query AND an abbreviation-expanded variant.
-
-═══════════════════════════════════════════════════════════════════════════
-DUAL-QUERY STRATEGY  (why this exists)
-═══════════════════════════════════════════════════════════════════════════
-Problem:
-  - Eval queries use full words → expanding abbreviations HURTS accuracy
-    because extra tokens dilute embedding similarity (99% → 97%).
-  - Real users WILL type abbreviations ("OPC", "TMT", "PVC") that may NOT
-    appear in the indexed documents.
-
-Solution:
-  Return TWO query strings and let the retriever decide how to use them:
-
-    result.queries[0]         → PRIMARY   = spelling-corrected original
-                                 (drives the main retrieval — preserves 99%)
-    result.expanded_query     → SECONDARY = abbreviations replaced with
-                                 full forms (only used as a fallback)
-
-  The retriever has several options (choose one):
-    A) Run ONLY the primary query.  Ignore expanded.  (= old behavior, 99%)
-    B) Run primary first.  If top-k scores are below a confidence threshold,
-       re-run with expanded_query and merge results.
-    C) Always run BOTH, retrieve top-k from each, deduplicate & re-rank.
-       Primary results get a small score boost so they're preferred when
-       both queries return the same document.
-
-  Option A matches the old eval exactly.  Options B/C handle unseen
-  abbreviation queries without hurting known performance.
-
-═══════════════════════════════════════════════════════════════════════════
-
-Public surface:
-    preprocess(query, abbrev_data) -> PreprocessResult
-    IrrelevantQueryError
-    load_abbrev_data(json_path) -> dict
-
-PreprocessResult fields:
-    is_relevant      : bool
-    queries          : list[str]   # [primary_query] — always length 1
-    expanded_query   : str         # abbreviation-expanded variant (may == primary)
-    has_expansions   : bool        # True when expanded_query differs from primary
-    user_message     : str         # non-empty only when is_relevant=False
-    was_decomposed   : bool        # always False (decomposition disabled)
-
-Backward-compatibility shim:
-    check_relevance_and_expand_query(query, groq_api_key=None) -> (bool, str, str)
-    Returns the PRIMARY query as the expanded_query (not the abbreviation-
-    expanded one) so existing callers see identical behavior to before.
 """
 
 from __future__ import annotations
@@ -91,9 +43,9 @@ class IrrelevantQueryError(Exception):
 @dataclass
 class PreprocessResult:
     is_relevant: bool
-    queries: list[str] = field(default_factory=list)      # [primary_query]
-    expanded_query: str = ""       # abbreviation-expanded variant
-    has_expansions: bool = False   # True when expanded differs from primary
+    queries: list[str] = field(default_factory=list)      
+    expanded_query: str = ""       
+    has_expansions: bool = False  
     user_message: str = ""
     was_decomposed: bool = False
 
@@ -314,16 +266,7 @@ def preprocess(
     normalised = _normalize(raw_query)
 
     # ── Step 3: Build ALL query variants ─────────────────────────────────
-    #
-    #   primary_query  = normalised ONLY (lowercase + whitespace collapse)
-    #                    → ZERO modifications to user's words
-    #                    → this is what the retriever uses by default
-    #                    → matches old preprocessor exactly → 99% Hit Rate
-    #
-    #   expanded_query = spelling-corrected + abbreviations replaced
-    #                    → only used as fallback when primary retrieval is weak
-    #                    → handles typos + unseen abbreviation queries
-    #
+ 
     primary_query = normalised
 
     # Spelling correction + abbreviation expansion for the fallback query
@@ -417,7 +360,7 @@ def check_relevance_and_expand_query(
     """
     api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
 
-    # ── WITH Groq key: use LLM (identical to old code) ───────────────────
+    # ── WITH Groq key: use LLM  ───────────────────
     if api_key:
         try:
             from groq import Groq
@@ -478,7 +421,7 @@ def check_relevance_and_expand_query(
 
         except Exception as e:
             print(f"[QueryPreprocessor] Groq call failed ({e}). Using keyword fallback.")
-            # Fall through to keyword check below
+           
 
     # ── WITHOUT Groq key (or Groq failed): keyword fallback ──────────────
     q = query.strip().lower()
@@ -529,34 +472,4 @@ if __name__ == "__main__":
         print("ERROR: Could not find bis_abbrevations.json in ./data/", file=sys.stderr)
         sys.exit(1)
 
-    test_cases = [
-        "hello",
-        "Namaste",
-        "OPC 43 standard",
-        "concreate standard",
-        "opc cement ka is code kya hai",
-        "standard for TMT bars and PVC pipe",
-        "fly ash brick and AAC block",
-        "IS 269",
-        "what is the weather today",
-        "ppc cement code?",
-        "cement ka code",
-        "requirements for manufacturing clay roof tiles",
-        # Abbreviation-only queries (unseen edge cases)
-        "OPC",
-        "TMT",
-        "PVC pipe",
-        "AAC block",
-    ]
-
-    print("=" * 70)
-    for q in test_cases:
-        r = preprocess(q, data)
-        print(f"INPUT : {q!r}")
-        print(f"  relevant         : {r.is_relevant}")
-        print(f"  primary query    : {r.queries}")
-        print(f"  expanded query   : {r.expanded_query!r}")
-        print(f"  has_expansions   : {r.has_expansions}")
-        if r.user_message:
-            print(f"  user_message     : {r.user_message[:80]}...")
-        print("-" * 70)
+    
