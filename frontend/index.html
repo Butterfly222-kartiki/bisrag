@@ -958,9 +958,6 @@
         <strong>BIS Standards Finder</strong>
         <span>AI-powered compliance discovery · SP 21 Building Materials</span>
       </div>
-      <div class="header-right">
-        <span class="badge-pill">RAG · Groq · FAISS</span>
-      </div>
     </div>
   </header>
 
@@ -975,18 +972,6 @@
       <p>Describe your product or compliance need. The AI pipeline retrieves relevant BIS standards using hybrid dense + sparse retrieval, then explains why each applies to your situation.</p>
 
 
-    </div>
-
-    <!-- Tab navigation -->
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('search', this)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Single Query
-      </button>
-      <button class="tab-btn" onclick="switchTab('batch', this)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        Batch Eval
-      </button>
     </div>
 
     <!-- Single query tab -->
@@ -1009,13 +994,6 @@
             <span class="field-label">Groq API Key</span>
             <input type="password" id="groqKey" class="text-input"
               placeholder="gsk_... optional — enables smart rationales" />
-          </div>
-
-          <div class="topk-group">
-            <span class="field-label">Results</span>
-            <button class="topk-pill" data-k="3">Top 3</button>
-            <button class="topk-pill active" data-k="5">Top 5</button>
-            <button class="topk-pill" data-k="7">Top 7</button>
           </div>
 
           <div class="examples-section">
@@ -1081,89 +1059,6 @@
     </div>
     </div><!-- end tab-search -->
 
-    <!-- Batch eval tab -->
-    <div id="tab-batch" class="tab-panel">
-      <div class="batch-card">
-        <label class="field-label">Upload test.json</label>
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="jsonFileInput" accept=".json" onchange="handleFileSelect(event)">
-          <div class="upload-icon">📂</div>
-          <div class="upload-label">Drop your <strong>test.json</strong> here or click to browse</div>
-          <div class="upload-hint">Format: [{&quot;id&quot;:&quot;...&quot;, &quot;query&quot;:&quot;...&quot;, &quot;expected_standards&quot;:[...]}]</div>
-        </div>
-        <div id="fileLoaded" style="display:none" class="file-loaded">
-          <span>✅</span>
-          <span class="fl-name" id="flName">—</span>
-          <span class="fl-count" id="flCount">— queries</span>
-        </div>
-
-        <div class="card-divider" style="margin:18px 0 14px"></div>
-
-        <div class="inline-field">
-          <span class="field-label">Groq API Key</span>
-          <input type="password" id="batchGroqKey" class="text-input"
-            placeholder="gsk_... (uses same key as search tab if set)" />
-        </div>
-
-        <div class="topk-group" style="margin-top:12px">
-          <span class="field-label">Retrieve top</span>
-          <button class="topk-pill" data-bk="3" onclick="setBatchK(3,this)">3</button>
-          <button class="topk-pill active" data-bk="5" onclick="setBatchK(5,this)">5</button>
-          <button class="topk-pill" data-bk="7" onclick="setBatchK(7,this)">7</button>
-        </div>
-
-        <div class="btn-row" style="margin-top:18px">
-          <button class="btn-primary" id="runBatchBtn" onclick="runBatch()" disabled>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Run Evaluation
-          </button>
-          <button class="btn-ghost" onclick="resetBatch()">Reset</button>
-        </div>
-      </div>
-
-      <!-- Progress -->
-      <div class="batch-progress" id="batchProgress"><div class="batch-progress-fill" id="batchFill"></div></div>
-      <div class="batch-status" id="batchStatus">Processing…</div>
-
-      <!-- Metrics -->
-      <div class="metrics-bar" id="metricsBar">
-        <div class="metric-card" id="mcHit">
-          <span class="metric-val" id="mvHit">—</span>
-          <span class="metric-lbl">Hit Rate @3</span>
-          <span class="metric-target">Target &gt;80%</span>
-        </div>
-        <div class="metric-card" id="mcMrr">
-          <span class="metric-val" id="mvMrr">—</span>
-          <span class="metric-lbl">MRR @5</span>
-          <span class="metric-target">Target &gt;0.7</span>
-        </div>
-        <div class="metric-card" id="mcLatency">
-          <span class="metric-val" id="mvLatency">—</span>
-          <span class="metric-lbl">Avg Latency</span>
-          <span class="metric-target">Target &lt;5s</span>
-        </div>
-        <div class="metric-card" id="mcTotal">
-          <span class="metric-val" id="mvTotal">—</span>
-          <span class="metric-lbl">Queries Run</span>
-          <span class="metric-target">&nbsp;</span>
-        </div>
-      </div>
-
-      <!-- Per-query results -->
-      <div class="eval-results-wrap" id="evalResultsWrap">
-        <div class="eval-toolbar">
-          <span class="eval-heading">Per-query Results</span>
-          <div class="filter-pills">
-            <button class="filter-pill active" onclick="filterRows('all',this)">All</button>
-            <button class="filter-pill" onclick="filterRows('hit',this)">Hits ✓</button>
-            <button class="filter-pill" onclick="filterRows('miss',this)">Misses ✗</button>
-          </div>
-          <button class="export-btn" onclick="exportResults()">⬇ Export JSON</button>
-        </div>
-        <div id="evalRows"></div>
-      </div>
-    </div><!-- end tab-batch -->
-
   </main>
 
   <footer>
@@ -1200,14 +1095,6 @@
         document.getElementById('query').focus();
       };
       chips.appendChild(chip);
-    });
-
-    document.querySelectorAll('.topk-pill').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.topk-pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedTopK = parseInt(btn.dataset.k);
-      });
     });
 
     document.getElementById('query').addEventListener('keydown', e => {
