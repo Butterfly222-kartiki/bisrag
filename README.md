@@ -10,6 +10,14 @@ An AI-powered system that maps natural language queries to relevant Bureau of In
 
 Run the setup script once before anything else. It creates the virtual environment, installs all dependencies, and then runs inference automatically.
 
+Windows (PowerShell or Command Prompt):
+
+```bat
+start.bat
+```
+
+Mac/Linux:
+
 ```bash
 chmod +x start.sh && ./start.sh
 ```
@@ -54,8 +62,8 @@ python3.11 -m venv venv
 
 Activate on Windows:
 
-```bash
-venv\Scripts\activate
+```bat
+venv\Scripts\activate.bat
 ```
 
 Activate on Mac/Linux:
@@ -133,6 +141,7 @@ bisrag/
 +-- eval_script.py
 +-- build_index.py
 +-- requirements.txt
++-- start.bat
 +-- start.sh
 +-- README.md
 ```
