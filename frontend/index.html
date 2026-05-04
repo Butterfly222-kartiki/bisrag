@@ -1470,15 +1470,24 @@
       let error = null;
 
       try {
-        const res = await fetch(`${API_BASE}/recommend`, {
+        // Use /batch endpoint to skip LLM calls
+        const res = await fetch(`${API_BASE}/batch`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, top_k: batchTopK, groq_api_key: groqKey || null })
+          body: JSON.stringify([{ query, top_k: batchTopK }])
         });
         const data = await res.json();
-        if (data.standards) {
-          fullStandards = data.standards;
-          retrieved = data.standards.map(s => s.standard_id);
+        if (data && data[0]) {
+          const result = data[0];
+          if (result.retrieved_standards) {
+            retrieved = result.retrieved_standards;
+            // Batch endpoint returns only IDs, create minimal standard objects
+            fullStandards = retrieved.map(id => ({ 
+              standard_id: id, 
+              title: '', 
+              rationale: '' 
+            }));
+          }
         }
       } catch(e) {
         error = e.message;
