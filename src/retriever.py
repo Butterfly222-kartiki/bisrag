@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from typing import List, Dict, Any, Tuple, Optional
 
@@ -7,6 +8,44 @@ import numpy as np
 from src.index_builder import EmbeddingEncoder, IndexStore, tokenize
 from src.query_preprocessor import check_relevance_and_expand_query, IrrelevantQueryError
 from src.reranker import Reranker
+
+
+# ── Part-number helpers (zero latency, pure regex) ────────────────────────────
+
+def extract_part_number(standard_id: str) -> Optional[int]:
+    """
+    Extracts part number from strings like:
+      'IS 1234 Part 2', 'IS 456-2', 'IS 789 (Part-1)', 'is1234part3'
+    Returns int (1, 2, 3) or None if no part mentioned.
+    """
+    match = re.search(r'part[\s\-]?(\d+)', standard_id, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    # Handle hyphenated form: IS 456-2
+    match = re.search(r'-(\d+)$', standard_id.strip())
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def extract_part_signal_from_query(query: str) -> Optional[int]:
+    """
+    Extracts explicit part number from query string.
+    Handles: 'part 2', 'part-2', 'part ii', 'part2'
+    Returns int or None.
+    """
+    # Arabic numerals: part 2, part-2, part2
+    match = re.search(r'part[\s\-]?(\d+)', query, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    # Roman numerals up to part IV
+    roman = {"i": 1, "ii": 2, "iii": 3, "iv": 4}
+    match = re.search(r'part[\s\-]?(iv|iii|ii|i)\b', query, re.IGNORECASE)
+    if match:
+        return roman.get(match.group(1).lower())
+    return None
+
+# ──────────────────────────────────────────────────────────────────────────────
 
 
 class BISRetriever:
@@ -93,25 +132,40 @@ class BISRetriever:
         fused = self._rrf_fusion(dense_res, sparse_res)
         timings["fusion"] = time.time() - t4
 
-        # Step 6 — Candidate building
+        # Step 6 — Candidate building (part_number extracted live from standard_id)
         t5 = time.time()
         candidates = []
         seen_indices = set()
-        for idx, score in fused[:5]:
+        for idx, score in fused[:10]:
             if idx < 0 or idx in seen_indices:
                 continue
             seen_indices.add(idx)
             chunk = dict(self.index_store.metadata[idx])
             chunk["rrf_score"] = score
+            # ── Extract part number live — no index rebuild needed ──
+            chunk["part_number"] = extract_part_number(chunk.get("standard_id", ""))
             candidates.append(chunk)
         timings["candidate_build"] = time.time() - t5
+
+        # Step 6.5 — Part-number filtering (zero latency, pure regex)
+        t_part = time.time()
+        query_part = extract_part_signal_from_query(query)
+        if query_part is not None:
+            part_match = [c for c in candidates if c.get("part_number") == query_part]
+            part_none  = [c for c in candidates if c.get("part_number") is None]
+            part_wrong = [c for c in candidates if c.get("part_number") is not None
+                                                and c.get("part_number") != query_part]
+            # Right part first → reranker sees best candidates at the top
+            # Wrong part kept at the back as a fallback (not discarded)
+            candidates = part_match + part_none + part_wrong
+        timings["part_filter"] = time.time() - t_part
 
         # Step 7 — Reranking
         t6 = time.time()
         if self.use_reranker:
             reranked = self.reranker.rerank(query, candidates, top_k=top_k * 2)
         else:
-            reranked = candidates 
+            reranked = candidates
         timings["rerank"] = time.time() - t6
 
         # Step 8 — Deduplication

@@ -146,6 +146,7 @@ def create_child_chunks(parent_chunks: List[Dict]) -> List[Dict]:
         sid   = parent["standard_id"]
         title = parent.get("title", "")
         text  = parent["text"]
+        category = parent.get("category", "")
 
         raw_sentences = re.split(r'(?<=[.!?])\s+', text)
         sentences = [s.strip() for s in raw_sentences if len(s.strip()) >= MIN_SENTENCE_LEN]
@@ -155,6 +156,8 @@ def create_child_chunks(parent_chunks: List[Dict]) -> List[Dict]:
         context_prefix = f"Standard: {sid}"
         if title:
             context_prefix += f" -- {title}"
+        if category:
+            context_prefix += f" [Category: {category}]"
         context_prefix += ". "
 
         i = 0

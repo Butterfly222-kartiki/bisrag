@@ -1,11 +1,19 @@
 import json
 import argparse
 import sys
+import re
 
 
 def normalize_std(std_string):
-    """Normalizes the standard name by removing spaces and converting to lowercase for fair matching."""
-    return str(std_string).replace(" ", "").lower()
+    """
+    Normalizes the standard name for matching.
+    Strips the year suffix so IS 277: 1992 and IS 277: 2003 both match
+    as 'is277' — the corpus may only have one edition of a given standard.
+    """
+    s = str(std_string).replace(" ", "").lower()
+    # Strip trailing :YYYY year
+    s = re.sub(r':\d{4}$', '', s)
+    return s
 
 
 def evaluate_results(results_file):

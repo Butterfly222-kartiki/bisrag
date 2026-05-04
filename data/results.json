@@ -1,546 +1,1142 @@
 [
   {
-    "id": "Q-001",
-    "query": "I manufacture both 33 Grade and 43 Grade OPC. Are these covered under a single BIS standard or separate ones?",
+    "id": "PUB-01",
+    "query": "We are a small enterprise manufacturing 33 Grade Ordinary Portland Cement. Which BIS standard covers the chemical and physical requirements for our product?",
     "expected_standards": [
-      "IS 269: 1989",
-      "IS 8112: 1989"
+      "IS 269: 1989"
     ],
     "retrieved_standards": [
       "IS 269: 1989",
-      "IS 8112: 1989",
-      "IS 73: 1992",
-      "IS 5751: 1984"
-    ],
-    "latency_seconds": 2.784
-  },
-  {
-    "id": "Q-002",
-    "query": "My product uses fly ash blended with Portland clinker as the pozzolanic material. Which standard applies versus one using calcined clay?",
-    "expected_standards": [
-      "IS 1489 (Part 1): 1991"
-    ],
-    "retrieved_standards": [
-      "IS 1489 (Part 2): 1991"
-    ],
-    "latency_seconds": 0.063
-  },
-  {
-    "id": "Q-003",
-    "query": "We are sourcing coarse aggregates for both structural concrete and water-bound macadam road construction. Are these governed by the same standard?",
-    "expected_standards": [
-      "IS 383: 1970",
-      "IS 6579: 1981"
-    ],
-    "retrieved_standards": [
-      "IS 6579: 1981"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-004",
-    "query": "Our plant makes precast pipes for use as both storm water drains and drinking water mains. Does one standard cover both, or do we need separate certifications?",
-    "expected_standards": [
-      "IS 458: 2003",
-      "IS 784: 2001"
-    ],
-    "retrieved_standards": [
-      "IS 13592: 1992",
-      "IS 458: 2003",
-      "IS 5382: 1985",
-      "IS 4985: 2000"
-    ],
-    "latency_seconds": 0.062
-  },
-  {
-    "id": "Q-005",
-    "query": "I need a cement that resists aggressive sulfate soils AND hardens quickly. Can a single product satisfy both IS 8041 and IS 12330 requirements?",
-    "expected_standards": [
-      "IS 8041: 1990",
-      "IS 12330: 1988"
-    ],
-    "retrieved_standards": [
+      "IS 12269: 1987",
       "IS 12330: 1988",
-      "IS 6909: 1990",
-      "IS 8041: 1990"
+      "IS 8112: 1989",
+      "IS 8043: 1991"
     ],
-    "latency_seconds": 0.062
+    "latency_seconds": 2.878
   },
   {
-    "id": "Q-006",
-    "query": "We are exporting white decorative cement. Which BIS specification must we declare compliance with for architectural finishes?",
+    "id": "PUB-02",
+    "query": "I need to comply with the regulations for coarse and fine aggregates derived from natural sources intended for use in structural concrete.",
     "expected_standards": [
-      "IS 8042: 1989"
+      "IS 383: 1970"
     ],
     "retrieved_standards": [
-      "IS 712: 1984",
-      "IS 8042: 1989",
-      "IS 9743: 1990"
+      "IS 383: 1970",
+      "IS 9142: 1979",
+      "IS 8374: 1977",
+      "IS 9510: 1980"
     ],
-    "latency_seconds": 0.037
+    "latency_seconds": 0.076
   },
   {
-    "id": "Q-007",
-    "query": "A contractor asks for masonry cement for brick mortar but specifies it should NOT be used for RCC columns. Which standard is relevant here?",
+    "id": "PUB-03",
+    "query": "What is the official specification for manufacturing precast concrete pipes, both with and without reinforcement, for water mains and sewers?",
     "expected_standards": [
-      "IS 3466: 1988"
+      "IS 458: 2003"
     ],
     "retrieved_standards": [
-      "IS 3466: 1988",
-      "IS 3182: 1986"
+      "IS 458: 2003",
+      "IS 7319: 1974",
+      "IS 5382: 1985",
+      "IS 11925: 1986",
+      "IS 5820: 1970"
     ],
-    "latency_seconds": 0.072
+    "latency_seconds": 0.087
   },
   {
-    "id": "Q-008",
-    "query": "Our lightweight concrete block density is 1,200 kg/m³. Does it fall under IS 2185 Part 2 or Part 3 specification?",
+    "id": "PUB-04",
+    "query": "Our company is shifting to manufacturing hollow and solid lightweight concrete masonry blocks. What standard outlines the dimensions and physical requirements?",
     "expected_standards": [
       "IS 2185 (Part 2): 1983"
     ],
     "retrieved_standards": [
       "IS 2185 (Part 2): 1983",
-      "IS 2185 (Part 1): 1979"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-009",
-    "query": "We produce autoclaved aerated concrete panels with density 600 kg/m³ for external walls. Which Part of IS 2185 governs this?",
-    "expected_standards": [
-      "IS 2185 (Part 3): 1984"
-    ],
-    "retrieved_standards": [
-      "IS 2185 (Part 3): 1984"
-    ],
-    "latency_seconds": 0.057
-  },
-  {
-    "id": "Q-010",
-    "query": "A client wants precast concrete blocks that incorporate natural stone as aggregate for masonry. What standard should I refer to?",
-    "expected_standards": [
+      "IS 2185 (Part 1): 1979",
       "IS 12440: 1988"
     ],
-    "retrieved_standards": [
-      "IS 12440: 1988"
-    ],
-    "latency_seconds": 0.052
+    "latency_seconds": 0.068
   },
   {
-    "id": "Q-011",
-    "query": "We supply sand for both concrete mixes and plastering works from the same source. Are the gradation requirements under the same BIS standard?",
+    "id": "PUB-05",
+    "query": "Looking for the standard detailing corrugated and semi-corrugated asbestos cement sheets used for roofing and cladding of buildings.",
     "expected_standards": [
-      "IS 383: 1970",
-      "IS 1542: 1992"
+      "IS 459: 1992"
     ],
     "retrieved_standards": [
-      "IS 1542: 1992",
-      "IS 14241: 1995"
+      "IS 459: 1992",
+      "IS 13008: 1990",
+      "IS 14871: 2000",
+      "IS 12866: 1989",
+      "IS 1626: 1984"
     ],
-    "latency_seconds": 0.081
+    "latency_seconds": 0.073
   },
   {
-    "id": "Q-012",
-    "query": "What is the standard for sand specifically intended for masonry mortar, as opposed to concrete?",
+    "id": "PUB-06",
+    "query": "What is the Indian Standard covering the manufacture, chemical, and physical requirements for Portland slag cement?",
     "expected_standards": [
-      "IS 2116: 1980"
+      "IS 455: 1989"
     ],
     "retrieved_standards": [
-      "IS 2116: 1980",
+      "IS 455: 1989",
+      "IS 269: 1989",
+      "IS 12330: 1988",
+      "IS 12269: 1987",
+      "IS 8112: 1989"
+    ],
+    "latency_seconds": 0.06
+  },
+  {
+    "id": "PUB-07",
+    "query": "We are setting up a plant to produce Portland pozzolana cement that is calcined clay based. What is the applicable standard?",
+    "expected_standards": [
+      "IS 1489 (Part 2): 1991"
+    ],
+    "retrieved_standards": [
+      "IS 1489 (Part 2): 1991",
+      "IS 12330: 1988"
+    ],
+    "latency_seconds": 0.111
+  },
+  {
+    "id": "PUB-08",
+    "query": "Which standard applies to masonry cement used for general purposes where mortars for masonry are required, but not intended for structural concrete?",
+    "expected_standards": [
+      "IS 3466: 1988"
+    ],
+    "retrieved_standards": [
       "IS 3466: 1988",
-      "IS 10360: 1982"
+      "IS 712: 1984",
+      "IS 2185 (Part 1): 1979",
+      "IS 2185 (Part 2): 1983",
+      "IS 4098: 1983"
     ],
-    "latency_seconds": 0.04
+    "latency_seconds": 0.122
   },
   {
-    "id": "Q-013",
-    "query": "We want to use cinder (industrial byproduct) as a fine aggregate in lime concrete. Which BIS standard defines its requirements?",
-    "expected_standards": [
-      "IS 2686: 1977"
-    ],
-    "retrieved_standards": [
-      "IS 2686: 1977",
-      "IS 9142: 1979"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-014",
-    "query": "Our factory produces artificial lightweight aggregates made from sintered fly ash for use in lightweight concrete masonry units. What standard applies?",
-    "expected_standards": [
-      "IS 9142: 1979"
-    ],
-    "retrieved_standards": [
-      "IS 9142: 1979"
-    ],
-    "latency_seconds": 0.037
-  },
-  {
-    "id": "Q-015",
-    "query": "Can supersulphated cement be used in seawater environments? Which BIS standard specifies its composition for such aggressive conditions?",
+    "id": "PUB-09",
+    "query": "Looking for the standard that details the composition, manufacture, and testing of supersulphated cement, particularly for marine works or aggressive water conditions.",
     "expected_standards": [
       "IS 6909: 1990"
     ],
     "retrieved_standards": [
       "IS 6909: 1990",
+      "IS 14871: 2000",
+      "IS 778: 1984",
+      "IS 3709: 1966",
       "IS 12330: 1988"
     ],
-    "latency_seconds": 0.059
+    "latency_seconds": 0.131
   },
   {
-    "id": "Q-016",
-    "query": "I need a standard for high alumina cement used in structural applications where high early strength and refractory properties are needed.",
+    "id": "PUB-10",
+    "query": "Our company manufactures White Portland cement for architectural and decorative purposes. Which standard governs its physical and chemical requirements?",
+    "expected_standards": [
+      "IS 8042: 1989"
+    ],
+    "retrieved_standards": [
+      "IS 8042: 1989",
+      "IS 269: 1989",
+      "IS 8112: 1989",
+      "IS 12330: 1988"
+    ],
+    "latency_seconds": 0.094
+  },
+  {
+    "id": "PUB-11",
+    "query": "We produce 43 Grade Ordinary Portland Cement in our plant. Which BIS standard should we certify against?",
+    "expected_standards": [
+      "IS 8112: 1989"
+    ],
+    "retrieved_standards": [
+      "IS 12269: 1987",
+      "IS 8112: 1989",
+      "IS 269: 1989",
+      "IS 10388: 1982"
+    ],
+    "latency_seconds": 0.093
+  },
+  {
+    "id": "PUB-12",
+    "query": "What standard covers 53 Grade Ordinary Portland Cement for high-strength construction applications?",
+    "expected_standards": [
+      "IS 12269: 1987"
+    ],
+    "retrieved_standards": [
+      "IS 12269: 1987",
+      "IS 269: 1989",
+      "IS 8112: 1989"
+    ],
+    "latency_seconds": 0.067
+  },
+  {
+    "id": "PUB-13",
+    "query": "We want to manufacture rapid hardening Portland cement for fast construction. Which specification applies?",
+    "expected_standards": [
+      "IS 8041: 1990"
+    ],
+    "retrieved_standards": [
+      "IS 8041: 1990",
+      "IS 12269: 1987",
+      "IS 6523: 1983",
+      "IS 8112: 1989"
+    ],
+    "latency_seconds": 0.087
+  },
+  {
+    "id": "PUB-14",
+    "query": "Our plant is being set up to produce hydrophobic Portland cement that resists moisture during transport and storage. Which BIS standard is applicable?",
+    "expected_standards": [
+      "IS 8043: 1991"
+    ],
+    "retrieved_standards": [
+      "IS 8043: 1991",
+      "IS 12330: 1988",
+      "IS 2645: 2003",
+      "IS 9537 (Part 1): 1980"
+    ],
+    "latency_seconds": 0.111
+  },
+  {
+    "id": "PUB-15",
+    "query": "We need the standard for sulphate resisting Portland cement used in aggressive soil conditions and marine construction.",
+    "expected_standards": [
+      "IS 12330: 1988"
+    ],
+    "retrieved_standards": [
+      "IS 6909: 1990",
+      "IS 12330: 1988"
+    ],
+    "latency_seconds": 0.106
+  },
+  {
+    "id": "PUB-16",
+    "query": "Our factory produces hollow and solid concrete blocks for load-bearing and partition walls. What BIS standard defines the grade requirements and dimensions?",
+    "expected_standards": [
+      "IS 2185 (Part 1): 1979"
+    ],
+    "retrieved_standards": [
+      "IS 2185 (Part 1): 1979",
+      "IS 2185 (Part 2): 1983",
+      "IS 2849: 1983"
+    ],
+    "latency_seconds": 0.138
+  },
+  {
+    "id": "PUB-17",
+    "query": "We produce autoclaved cellular (aerated) concrete blocks with density up to 1000 kg/m3. What standard should our product conform to?",
+    "expected_standards": [
+      "IS 2185 (Part 3): 1984"
+    ],
+    "retrieved_standards": [
+      "IS 2185 (Part 3): 1984",
+      "IS 6072: 1971",
+      "IS 6073: 1971"
+    ],
+    "latency_seconds": 0.128
+  },
+  {
+    "id": "PUB-18",
+    "query": "What specification covers artificial lightweight aggregates such as foamed blast furnace slag for use in concrete masonry units?",
+    "expected_standards": [
+      "IS 9142: 1979"
+    ],
+    "retrieved_standards": [
+      "IS 9142: 1979",
+      "IS 6579: 1981"
+    ],
+    "latency_seconds": 0.103
+  },
+  {
+    "id": "PUB-19",
+    "query": "We need the standard for high alumina cement (HAC) used for structural building applications where high early strength is required.",
     "expected_standards": [
       "IS 6452: 1989"
     ],
     "retrieved_standards": [
-      "IS 6452: 1989"
+      "IS 6452: 1989",
+      "IS 14871: 2000",
+      "IS 8112: 1989",
+      "IS 3466: 1988"
     ],
-    "latency_seconds": 0.047
+    "latency_seconds": 0.127
   },
   {
-    "id": "Q-017",
-    "query": "Our precast unit makes reinforced fence posts for agricultural land boundaries. Which standard do we certify against?",
+    "id": "PUB-20",
+    "query": "We manufacture sand from crushed stone for use in masonry mortars. What BIS standard defines the requirements?",
+    "expected_standards": [
+      "IS 2116: 1980"
+    ],
+    "retrieved_standards": [
+      "IS 2116: 1980",
+      "IS 1542: 1992"
+    ],
+    "latency_seconds": 0.106
+  },
+  {
+    "id": "PUB-21",
+    "query": "What is the BIS specification for Portland pozzolana cement made from fly ash pozzolana used in general construction?",
+    "expected_standards": [
+      "IS 1489 (Part 1): 1991"
+    ],
+    "retrieved_standards": [
+      "IS 1489 (Part 1): 1991",
+      "IS 1489 (Part 2): 1991"
+    ],
+    "latency_seconds": 0.118
+  },
+  {
+    "id": "PUB-22",
+    "query": "Our company makes reinforced concrete fence posts for farm and boundary fencing. Which standard applies to their shape, size and strength requirements?",
     "expected_standards": [
       "IS 4996: 1984"
     ],
     "retrieved_standards": [
       "IS 4996: 1984"
     ],
-    "latency_seconds": 0.043
+    "latency_seconds": 0.142
   },
   {
-    "id": "Q-018",
-    "query": "We manufacture precast concrete kerb stones for road edging. Is there a dedicated BIS standard for this product?",
+    "id": "PUB-23",
+    "query": "We produce precast concrete manhole covers and frames intended for sewerage and water drainage systems. What is the applicable BIS standard?",
+    "expected_standards": [
+      "IS 12592: 2002"
+    ],
+    "retrieved_standards": [
+      "IS 12592: 2002",
+      "IS 1726: 1991",
+      "IS 5751: 1984"
+    ],
+    "latency_seconds": 0.141
+  },
+  {
+    "id": "PUB-24",
+    "query": "What standard covers precast concrete kerbs, channels, edgings and quadrants used in carriageways and footways?",
     "expected_standards": [
       "IS 5758: 1984"
     ],
     "retrieved_standards": [
       "IS 5758: 1984",
-      "IS 12440: 1988"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-019",
-    "query": "A housing project requires precast door and window frames in reinforced concrete. Which specification should the manufacturer follow?",
-    "expected_standards": [
-      "IS 6523: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 6523: 1983"
-    ],
-    "latency_seconds": 0.075
-  },
-  {
-    "id": "Q-020",
-    "query": "We supply precast coping blocks for garden walls and boundary walls. What is the relevant BIS standard?",
-    "expected_standards": [
       "IS 5751: 1984"
     ],
+    "latency_seconds": 0.118
+  },
+  {
+    "id": "PUB-25",
+    "query": "We are looking for the standard for prestressed concrete pipes including specials with nominal internal diameter from 200 mm to 2 m.",
+    "expected_standards": [
+      "IS 784: 2001"
+    ],
     "retrieved_standards": [
-      "IS 5751: 1984"
+      "IS 784: 2001",
+      "IS 458: 2003",
+      "IS 7322: 1985"
+    ],
+    "latency_seconds": 0.134
+  },
+  {
+    "id": "PUB-26",
+    "query": "Our unit produces precast reinforced concrete planks and joists for roofing and flooring applications. Which BIS standard covers the requirements?",
+    "expected_standards": [
+      "IS 13990: 1994"
+    ],
+    "retrieved_standards": [
+      "IS 13990: 1994",
+      "IS 14201: 1994",
+      "IS 14143: 1994"
+    ],
+    "latency_seconds": 0.124
+  },
+  {
+    "id": "PUB-27",
+    "query": "We need a standard for hot applied sealing compounds used to fill contraction and expansion joints in concrete roads and structures.",
+    "expected_standards": [
+      "IS 1834: 1984"
+    ],
+    "retrieved_standards": [
+      "IS 1834: 1984",
+      "IS 1838 (Part 1): 1983"
+    ],
+    "latency_seconds": 0.131
+  },
+  {
+    "id": "PUB-28",
+    "query": "What BIS standard covers asbestos cement pressure pipes and their joints intended for use under pressure in water supply systems?",
+    "expected_standards": [
+      "IS 1592: 2003"
+    ],
+    "retrieved_standards": [
+      "IS 1592: 2003",
+      "IS 5531: 1988",
+      "IS 1626 (Part 1): 1994",
+      "IS 12987: 1991",
+      "IS 1626: 1984"
+    ],
+    "latency_seconds": 0.149
+  },
+  {
+    "id": "PUB-29",
+    "query": "We are setting up production of precast ferrocement water tanks ranging from 270 to 10,000 litres capacity. Which specification covers this?",
+    "expected_standards": [
+      "IS 13356: 1992"
+    ],
+    "retrieved_standards": [
+      "IS 13356: 1992",
+      "IS 12592: 2002"
+    ],
+    "latency_seconds": 0.156
+  },
+  {
+    "id": "PUB-30",
+    "query": "What standard applies to corrugated roofing sheets made from a mixture of coir, woodwool and cement for low-cost housing?",
+    "expected_standards": [
+      "IS 10388: 1982"
+    ],
+    "retrieved_standards": [
+      "IS 10388: 1982",
+      "IS 12866: 1989",
+      "IS 14871: 2000"
+    ],
+    "latency_seconds": 0.134
+  },
+  {
+    "id": "PUB-31",
+    "query": "Our MSE produces common burnt clay building bricks for residential construction. Which BIS standard covers classification, dimensions and compressive strength requirements?",
+    "expected_standards": [
+      "IS 1077: 1992"
+    ],
+    "retrieved_standards": [
+      "IS 1077: 1992",
+      "IS 2180: 1988",
+      "IS 2691: 1988",
+      "IS 13757: 1993",
+      "IS 3583: 1988"
+    ],
+    "latency_seconds": 0.146
+  },
+  {
+    "id": "PUB-32",
+    "query": "We manufacture heavy-duty burnt clay building bricks for industrial floor use. What is the BIS specification for these?",
+    "expected_standards": [
+      "IS 2180: 1988"
+    ],
+    "retrieved_standards": [
+      "IS 2180: 1988",
+      "IS 1077: 1992",
+      "IS 14223 (Part 1): 1995",
+      "IS 2222: 1991",
+      "IS 13757: 1993"
+    ],
+    "latency_seconds": 0.144
+  },
+  {
+    "id": "PUB-33",
+    "query": "We make burnt clay perforated bricks for wall construction. Which standard covers their dimensions, perforation requirements and physical properties?",
+    "expected_standards": [
+      "IS 2222: 1991"
+    ],
+    "retrieved_standards": [
+      "IS 2222: 1991",
+      "IS 5779: 1986",
+      "IS 3583: 1988",
+      "IS 2691: 1988"
+    ],
+    "latency_seconds": 0.123
+  },
+  {
+    "id": "PUB-34",
+    "query": "What is the specification for building limes used in construction purposes including eminently hydraulic lime, kankar lime and magnesium lime?",
+    "expected_standards": [
+      "IS 712: 1984"
+    ],
+    "retrieved_standards": [
+      "IS 712: 1984",
+      "IS 4098: 1983",
+      "IS 10772: 1983"
+    ],
+    "latency_seconds": 0.129
+  },
+  {
+    "id": "PUB-35",
+    "query": "We produce pulverized fuel ash (fly ash) lime bricks for building construction. What BIS standard specifies the classification, dimensions and physical requirements?",
+    "expected_standards": [
+      "IS 12894: 2002"
+    ],
+    "retrieved_standards": [
+      "IS 12894: 2002"
+    ],
+    "latency_seconds": 0.133
+  },
+  {
+    "id": "PUB-36",
+    "query": "We need the standard for lime pozzolana mixture used in construction works including for masonry mortars and general construction.",
+    "expected_standards": [
+      "IS 4098: 1983"
+    ],
+    "retrieved_standards": [
+      "IS 4098: 1983",
+      "IS 10772: 1983",
+      "IS 2116: 1980",
+      "IS 712: 1984"
+    ],
+    "latency_seconds": 0.111
+  },
+  {
+    "id": "PUB-37",
+    "query": "What standard covers calcium silicate bricks used in building construction, covering classification, dimensions and compressive strength?",
+    "expected_standards": [
+      "IS 4139: 1989"
+    ],
+    "retrieved_standards": [
+      "IS 4139: 1989",
+      "IS 8154: 1993"
+    ],
+    "latency_seconds": 0.102
+  },
+  {
+    "id": "PUB-38",
+    "query": "We make lime-based hollow and solid blocks for walls and partitions. Which BIS standard specifies dimensions, quality and strength requirements for these?",
+    "expected_standards": [
+      "IS 3115: 1992"
+    ],
+    "retrieved_standards": [
+      "IS 3115: 1992",
+      "IS 3952: 1988",
+      "IS 2185 (Part 2): 1983"
+    ],
+    "latency_seconds": 0.136
+  },
+  {
+    "id": "PUB-39",
+    "query": "What standard covers broken brick (burnt clay) coarse aggregate for use in lime concrete applications?",
+    "expected_standards": [
+      "IS 3068: 1986"
+    ],
+    "retrieved_standards": [
+      "IS 3068: 1986",
+      "IS 3182: 1986",
+      "IS 12118 (Part 1): 1987"
+    ],
+    "latency_seconds": 0.096
+  },
+  {
+    "id": "PUB-40",
+    "query": "Our quarry supplies natural building stones for masonry work. Which BIS standard covers the dimensions and workmanship requirements for such stones?",
+    "expected_standards": [
+      "IS 1127: 1970"
+    ],
+    "retrieved_standards": [
+      "IS 1127: 1970",
+      "IS 12894: 2002",
+      "IS 3620: 1979"
+    ],
+    "latency_seconds": 0.12
+  },
+  {
+    "id": "PUB-41",
+    "query": "We supply marble blocks, slabs and tiles for flooring and cladding. What are the BIS requirements for sizes, physical properties and quality?",
+    "expected_standards": [
+      "IS 1130: 1969"
+    ],
+    "retrieved_standards": [
+      "IS 1130: 1969",
+      "IS 3622: 1977"
+    ],
+    "latency_seconds": 0.138
+  },
+  {
+    "id": "PUB-42",
+    "query": "We are a granite quarry supplying structural granite for construction. Which BIS specification covers selection, grading and strength requirements?",
+    "expected_standards": [
+      "IS 3316: 1974"
+    ],
+    "retrieved_standards": [
+      "IS 3316: 1974",
+      "IS 14223 (Part 1): 1995",
+      "IS 775: 1970"
+    ],
+    "latency_seconds": 0.118
+  },
+  {
+    "id": "PUB-43",
+    "query": "What is the Indian Standard for sandstone slabs and tiles used in flooring, roofing and face work?",
+    "expected_standards": [
+      "IS 3622: 1977"
+    ],
+    "retrieved_standards": [
+      "IS 3622: 1977",
+      "IS 1128: 1974",
+      "IS 12894: 2002"
+    ],
+    "latency_seconds": 0.109
+  },
+  {
+    "id": "PUB-44",
+    "query": "We supply laterite stone blocks for use in masonry walls and partitions in coastal areas. What standard applies to their dimensions and physical properties?",
+    "expected_standards": [
+      "IS 3620: 1979"
+    ],
+    "retrieved_standards": [
+      "IS 3620: 1979",
+      "IS 12440: 1988",
+      "IS 1127: 1970",
+      "IS 2185 (Part 1): 1979",
+      "IS 2185 (Part 2): 1983"
+    ],
+    "latency_seconds": 0.151
+  },
+  {
+    "id": "PUB-45",
+    "query": "We produce roofing slate tiles for sloped roofs. Which BIS standard specifies their dimensions, physical properties and workmanship requirements?",
+    "expected_standards": [
+      "IS 6250: 1981"
+    ],
+    "retrieved_standards": [
+      "IS 6250: 1981",
+      "IS 13317: 1992",
+      "IS 3951 (Part 1): 1975"
+    ],
+    "latency_seconds": 0.128
+  },
+  {
+    "id": "PUB-46",
+    "query": "What standard covers limestone slabs and tiles for use in flooring and face work, including physical properties and dimension tolerances?",
+    "expected_standards": [
+      "IS 1128: 1974"
+    ],
+    "retrieved_standards": [
+      "IS 1128: 1974",
+      "IS 3622: 1977",
+      "IS 1130: 1969"
+    ],
+    "latency_seconds": 0.123
+  },
+  {
+    "id": "PUB-47",
+    "query": "Our factory manufactures polished granite slabs for building cladding and flooring applications. Which BIS specification covers finish and physical requirements?",
+    "expected_standards": [
+      "IS 14223 (Part 1): 1995"
+    ],
+    "retrieved_standards": [
+      "IS 14223 (Part 1): 1995",
+      "IS 3316: 1974",
+      "IS 10090: 1982",
+      "IS 3622: 1977",
+      "IS 12894: 2002"
+    ],
+    "latency_seconds": 0.124
+  },
+  {
+    "id": "PUB-48",
+    "query": "We supply stone lintels cut from natural stone for door and window openings. Which standard covers dimensions, physical properties and workmanship?",
+    "expected_standards": [
+      "IS 9394: 1979"
+    ],
+    "retrieved_standards": [
+      "IS 9394: 1979",
+      "IS 3620: 1979",
+      "IS 1127: 1970"
+    ],
+    "latency_seconds": 0.142
+  },
+  {
+    "id": "PUB-49",
+    "query": "What is the BIS standard for safety glass including laminated glass and wired glass for use in building applications?",
+    "expected_standards": [
+      "IS 2553 (Part 1): 1990"
+    ],
+    "retrieved_standards": [
+      "IS 2553 (Part 1): 1990",
+      "IS 2721: 1979",
+      "IS 2835: 1987"
+    ],
+    "latency_seconds": 0.149
+  },
+  {
+    "id": "PUB-50",
+    "query": "We manufacture flat transparent sheet glass for windows and doors. Which BIS specification covers quality requirements, dimensions and physical properties?",
+    "expected_standards": [
+      "IS 2835: 1987"
+    ],
+    "retrieved_standards": [
+      "IS 2835: 1987",
+      "IS 2553 (Part 1): 1990",
+      "IS 12866: 1989",
+      "IS 1038: 1983"
+    ],
+    "latency_seconds": 0.166
+  },
+  {
+    "id": "PUB-51",
+    "query": "Our factory produces figured, rolled and wired glass for use in buildings. What is the applicable BIS standard for these products?",
+    "expected_standards": [
+      "IS 5437: 1994"
+    ],
+    "retrieved_standards": [
+      "IS 5437: 1994",
+      "IS 2553 (Part 1): 1990",
+      "IS 14695: 1999",
+      "IS 2721: 1979"
+    ],
+    "latency_seconds": 0.167
+  },
+  {
+    "id": "PUB-52",
+    "query": "We make silvered glass mirrors for general domestic and commercial purposes. Which BIS standard governs the physical and quality requirements?",
+    "expected_standards": [
+      "IS 3438: 1994"
+    ],
+    "retrieved_standards": [
+      "IS 3438: 1994",
+      "IS 2835: 1987"
+    ],
+    "latency_seconds": 0.139
+  },
+  {
+    "id": "PUB-53",
+    "query": "What is the BIS specification for corrugated aluminium sheet used for roofing purposes?",
+    "expected_standards": [
+      "IS 1254: 1991"
+    ],
+    "retrieved_standards": [
+      "IS 1254: 1991",
+      "IS 8869: 1978",
+      "IS 730: 1978",
+      "IS 12583: 1988"
+    ],
+    "latency_seconds": 0.097
+  },
+  {
+    "id": "PUB-54",
+    "query": "We produce expanded polystyrene for thermal insulation in buildings and cold storage. Which BIS standard specifies the requirements?",
+    "expected_standards": [
+      "IS 4671: 1984"
+    ],
+    "retrieved_standards": [
+      "IS 4671: 1984",
+      "IS 3709: 1966"
+    ],
+    "latency_seconds": 0.112
+  },
+  {
+    "id": "PUB-55",
+    "query": "Our plant makes bonded mineral wool for thermal insulation of buildings. What BIS standard covers the specification requirements?",
+    "expected_standards": [
+      "IS 8183: 1993"
+    ],
+    "retrieved_standards": [
+      "IS 8183: 1993",
+      "IS 9842: 1994",
+      "IS 9742: 1993",
+      "IS 3709: 1966"
+    ],
+    "latency_seconds": 0.114
+  },
+  {
+    "id": "PUB-56",
+    "query": "We supply preformed calcium silicate insulation boards and blocks for high-temperature industrial applications. Which standard applies?",
+    "expected_standards": [
+      "IS 8154: 1993"
+    ],
+    "retrieved_standards": [
+      "IS 9428: 1993",
+      "IS 8154: 1993",
+      "IS 3709: 1966",
+      "IS 11128: 1984"
+    ],
+    "latency_seconds": 0.122
+  },
+  {
+    "id": "PUB-57",
+    "query": "What standard covers cellular glass blocks used as thermal insulation material in building construction?",
+    "expected_standards": [
+      "IS 11307: 1985"
+    ],
+    "retrieved_standards": [
+      "IS 11307: 1985",
+      "IS 6598: 1972"
     ],
     "latency_seconds": 0.09
   },
   {
-    "id": "Q-021",
-    "query": "Our plant is setting up to make precast ferrocement water tanks ranging from 500 to 5,000 litres. Which standard applies?",
+    "id": "PUB-58",
+    "query": "Our company produces rigid polyurethane (PUR) and polyisocyanurate (PIR) foam for thermal insulation in buildings. Which BIS specification applies?",
     "expected_standards": [
-      "IS 13356: 1992"
+      "IS 12436: 1988"
     ],
     "retrieved_standards": [
-      "IS 13356: 1992"
+      "IS 12436: 1988"
     ],
-    "latency_seconds": 0.074
+    "latency_seconds": 0.118
   },
   {
-    "id": "Q-022",
-    "query": "We manufacture precast concrete planks and joists specifically for constructing floors and roofs of buildings. Which BIS standard is applicable?",
+    "id": "PUB-59",
+    "query": "We need the standard for steel tubes used for structural purposes in construction, covering dimensions, mass and mechanical properties.",
     "expected_standards": [
-      "IS 13990: 1994"
+      "IS 1161: 1998"
     ],
     "retrieved_standards": [
-      "IS 13990: 1994"
+      "IS 1161: 1998",
+      "IS 738: 1994",
+      "IS 740: 1977",
+      "IS 1239 (Part 1): 2004"
     ],
-    "latency_seconds": 0.056
+    "latency_seconds": 0.193
   },
   {
-    "id": "Q-023",
-    "query": "Our company makes precast L-panel units used as roofing elements in low-cost housing. What standard governs their physical requirements?",
+    "id": "PUB-60",
+    "query": "What BIS standard covers hot rolled steel strip and sheets for general engineering and construction applications?",
     "expected_standards": [
-      "IS 14241: 1995"
+      "IS 1079: 1994"
     ],
     "retrieved_standards": [
-      "IS 14241: 1995"
+      "IS 1730: 1989",
+      "IS 1079: 1994",
+      "IS 737: 1986",
+      "IS 513: 1994",
+      "IS 3502: 1994"
     ],
-    "latency_seconds": 0.048
+    "latency_seconds": 0.107
   },
   {
-    "id": "Q-024",
-    "query": "We produce precast reinforced concrete channel units used in composite floor and roof construction. Which standard do we conform to?",
+    "id": "PUB-61",
+    "query": "We need the standard for hot rolled and slit steel tee bars for structural construction purposes.",
     "expected_standards": [
-      "IS 14201: 1994"
+      "IS 1173: 1978"
     ],
     "retrieved_standards": [
-      "IS 14201: 1994"
+      "IS 1173: 1978",
+      "IS 1148: 1982",
+      "IS 1079: 1994",
+      "IS 1732: 1989"
     ],
-    "latency_seconds": 0.05
+    "latency_seconds": 0.1
   },
   {
-    "id": "Q-025",
-    "query": "A specification calls for corrugated coir-woodwool-cement composite roofing sheets as an eco-friendly alternative. What BIS standard covers this product?",
+    "id": "PUB-62",
+    "query": "Our company manufactures structural weather-resistant steels for bridges and outdoor structures. Which BIS specification applies to weathering steel?",
     "expected_standards": [
+      "IS 11587: 1986"
+    ],
+    "retrieved_standards": [
+      "IS 11587: 1986",
+      "IS 733: 1983",
+      "IS 14443: 1997",
+      "IS 4621: 1975"
+    ],
+    "latency_seconds": 0.126
+  },
+  {
+    "id": "PUB-63",
+    "query": "What standard covers hot rolled steel rivets for hot closing in structural steel construction?",
+    "expected_standards": [
+      "IS 1929: 1982"
+    ],
+    "retrieved_standards": [
+      "IS 1929: 1982",
+      "IS 2155: 1982",
+      "IS 1148: 1982",
+      "IS 2998: 1982"
+    ],
+    "latency_seconds": 0.085
+  },
+  {
+    "id": "PUB-64",
+    "query": "We manufacture high-strength structural bolts for steel frame construction. Which BIS standard specifies the requirements?",
+    "expected_standards": [
+      "IS 3757: 1985"
+    ],
+    "retrieved_standards": [
+      "IS 3757: 1985",
+      "IS 6649: 1985",
+      "IS 5624: 1993",
+      "IS 6639: 1972"
+    ],
+    "latency_seconds": 0.097
+  },
+  {
+    "id": "PUB-65",
+    "query": "What standard covers foundation bolts used in anchoring machinery and structures to concrete foundations?",
+    "expected_standards": [
+      "IS 5624: 1993"
+    ],
+    "retrieved_standards": [
+      "IS 5624: 1993",
+      "IS 5751: 1984",
+      "IS 6639: 1972",
+      "IS 4621: 1975",
+      "IS 10238: 2001"
+    ],
+    "latency_seconds": 0.104
+  },
+  {
+    "id": "PUB-66",
+    "query": "We supply plain washers for general construction and engineering applications. Which BIS standard specifies general requirements?",
+    "expected_standards": [
+      "IS 5369: 1975"
+    ],
+    "retrieved_standards": [
+      "IS 5369: 1975",
+      "IS 2016: 1967",
+      "IS 6610: 1972",
+      "IS 12427: 2001",
+      "IS 10238: 2001"
+    ],
+    "latency_seconds": 0.113
+  },
+  {
+    "id": "PUB-67",
+    "query": "We produce heavy washers for use in steel structural connections. Which BIS standard governs their requirements?",
+    "expected_standards": [
+      "IS 6610: 1972"
+    ],
+    "retrieved_standards": [
+      "IS 6610: 1972",
+      "IS 6649: 1985",
+      "IS 12427: 2001",
+      "IS 6623: 2004",
+      "IS 8828: 1996"
+    ],
+    "latency_seconds": 0.105
+  },
+  {
+    "id": "PUB-68",
+    "query": "What is the BIS specification for common burnt clay floor and wall tiles (glazed and unglazed) used in buildings?",
+    "expected_standards": [
+      "IS 1237: 1980"
+    ],
+    "retrieved_standards": [
+      "IS 771 (Part 1): 1979",
+      "IS 3367: 1993",
+      "IS 2690 (Part 1): 1993",
+      "IS 1077: 1992",
+      "IS 13757: 1993"
+    ],
+    "latency_seconds": 0.135
+  },
+  {
+    "id": "PUB-69",
+    "query": "We are a manufacturer of ceramic tiles made by dust pressing process. Which standard covers their physical requirements and classification?",
+    "expected_standards": [
+      "IS 13755: 1993"
+    ],
+    "retrieved_standards": [
+      "IS 13756: 1993",
+      "IS 13755: 1993",
+      "IS 13754: 1993",
+      "IS 13753: 1993"
+    ],
+    "latency_seconds": 0.147
+  },
+  {
+    "id": "PUB-70",
+    "query": "What is the standard for bitumen mastic used for flooring in industrial buildings where chemical resistance is needed?",
+    "expected_standards": [
+      "IS 1195: 2002"
+    ],
+    "retrieved_standards": [
+      "IS 13026: 1991",
+      "IS 1195: 2002",
+      "IS 8374: 1977",
+      "IS 9510: 1980"
+    ],
+    "latency_seconds": 0.126
+  },
+  {
+    "id": "PUB-71",
+    "query": "We manufacture corrugated bitumen roofing sheets for low-cost housing applications. Which BIS standard applies?",
+    "expected_standards": [
+      "IS 12583: 1988"
+    ],
+    "retrieved_standards": [
+      "IS 12583: 1988",
+      "IS 8374: 1977",
       "IS 10388: 1982"
     ],
-    "retrieved_standards": [
-      "IS 10388: 1982"
-    ],
-    "latency_seconds": 0.047
+    "latency_seconds": 0.107
   },
   {
-    "id": "Q-026",
-    "query": "We make autoclaved cellular concrete wall panels reinforced with steel. Is there a specific BIS standard different from the block standard?",
+    "id": "PUB-72",
+    "query": "Our company produces low density polyethylene films for construction damp proofing applications. Which standard governs the requirements?",
     "expected_standards": [
-      "IS 6072: 1971"
+      "IS 2508: 1984"
     ],
     "retrieved_standards": [
-      "IS 6072: 1971",
-      "IS 6073: 1971"
+      "IS 2508: 1984",
+      "IS 10889: 1984",
+      "IS 2036: 1995",
+      "IS 3384: 1986"
     ],
-    "latency_seconds": 0.046
+    "latency_seconds": 0.125
   },
   {
-    "id": "Q-027",
-    "query": "Our product is an autoclaved reinforced cellular concrete slab used for roofing. Which BIS standard applies versus the wall panel version?",
+    "id": "PUB-73",
+    "query": "We produce rigid PVC sheets for building applications including lining and cladding. Which BIS standard specifies the requirements?",
     "expected_standards": [
-      "IS 6073: 1971"
+      "IS 6307: 1995"
     ],
     "retrieved_standards": [
-      "IS 6072: 1971",
-      "IS 6073: 1971"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-028",
-    "query": "I need the BIS standard for precast concrete covers and frames for manholes used in municipal sewerage systems.",
-    "expected_standards": [
-      "IS 12592: 2002"
-    ],
-    "retrieved_standards": [
-      "IS 12592: 2002"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-029",
-    "query": "We manufacture precast concrete blocks for lintels and sills in building openings. What standard should we comply with?",
-    "expected_standards": [
-      "IS 9893: 1981"
-    ],
-    "retrieved_standards": [
-      "IS 9893: 1981"
-    ],
-    "latency_seconds": 0.039
-  },
-  {
-    "id": "Q-030",
-    "query": "What BIS standard covers cable covers made from precast concrete used in underground utility installations?",
-    "expected_standards": [
-      "IS 5820: 1970"
-    ],
-    "retrieved_standards": [
-      "IS 5820: 1970"
-    ],
-    "latency_seconds": 0.037
-  },
-  {
-    "id": "Q-031",
-    "query": "Our factory produces asbestos cement pressure pipes for water supply distribution networks. Which standard governs their manufacture?",
-    "expected_standards": [
-      "IS 1592: 2003"
-    ],
-    "retrieved_standards": [
-      "IS 9627: 1980",
-      "IS 1592: 2003",
-      "IS 1626 (Part 1): 1994"
-    ],
-    "latency_seconds": 0.046
-  },
-  {
-    "id": "Q-032",
-    "query": "We produce shallow corrugated asbestos cement sheets, which differ from the standard corrugated profile. Which separate BIS standard applies?",
-    "expected_standards": [
-      "IS 13008: 1990"
-    ],
-    "retrieved_standards": [
-      "IS 13008: 1990",
+      "IS 6307: 1985",
       "IS 14871: 2000",
-      "IS 12866: 1989"
+      "IS 737: 1986",
+      "IS 2036: 1995"
     ],
-    "latency_seconds": 0.046
+    "latency_seconds": 0.137
   },
   {
-    "id": "Q-033",
-    "query": "I manufacture asbestos cement flat sheets for cladding and partition walls, not roofing. Is there a specific standard for flat sheets?",
+    "id": "PUB-74",
+    "query": "What standard covers phenolic laminated sheets used for building purposes such as partitions and furniture panels?",
     "expected_standards": [
-      "IS 2096: 1992"
+      "IS 2036: 1995"
     ],
     "retrieved_standards": [
-      "IS 14862: 2000",
-      "IS 2096: 1992",
-      "IS 13000: 1990"
+      "IS 2036: 1995",
+      "IS 14862: 2000"
     ],
-    "latency_seconds": 0.056
+    "latency_seconds": 0.107
   },
   {
-    "id": "Q-034",
-    "query": "We make asbestos cement pipes for sewerage and surface drainage systems, not for pressure water supply. Which standard is relevant?",
+    "id": "PUB-75",
+    "query": "We manufacture decorative thermosetting synthetic resin bonded laminated sheets for interior cladding and furniture. Which BIS standard applies?",
     "expected_standards": [
-      "IS 6908: 1991"
+      "IS 2046: 1995"
     ],
     "retrieved_standards": [
-      "IS 6908: 1991",
-      "IS 1592: 2003",
-      "IS 1626 (Part 1): 1994"
+      "IS 2046: 1995",
+      "IS 2036: 1995"
     ],
-    "latency_seconds": 0.04
+    "latency_seconds": 0.114
   },
   {
-    "id": "Q-035",
-    "query": "Our product is asbestos cement cable conduits and troughs for routing electrical cables. Which BIS standard should we comply with?",
+    "id": "PUB-76",
+    "query": "What is the BIS standard for structural plywood used in building construction for walls, floors and roofs?",
     "expected_standards": [
-      "IS 8870: 1978"
+      "IS 10701: 1983"
     ],
     "retrieved_standards": [
-      "IS 8870: 1978"
+      "IS 10701: 1983",
+      "IS 14201: 1994",
+      "IS 3951 (Part 2): 1975",
+      "IS 303: 1989"
     ],
-    "latency_seconds": 0.059
+    "latency_seconds": 0.099
   },
   {
-    "id": "Q-036",
-    "query": "We produce a lighter version of asbestos cement pressure pipes described as light duty. Does a separate standard exist for these?",
+    "id": "PUB-77",
+    "query": "We supply medium density fibre boards for interior furniture and panelling applications. What is the applicable BIS specification?",
     "expected_standards": [
-      "IS 9627: 1980"
+      "IS 12406: 2003"
     ],
     "retrieved_standards": [
-      "IS 9627: 1980",
-      "IS 12987: 1991",
-      "IS 1592: 2003"
+      "IS 12406: 2003",
+      "IS 1659: 2004",
+      "IS 14587: 1998",
+      "IS 1003 (Part 1): 2003"
     ],
-    "latency_seconds": 0.045
+    "latency_seconds": 0.112
   },
   {
-    "id": "Q-037",
-    "query": "What is the standard for silica-asbestos cement flat sheets which differ from ordinary asbestos cement flat sheets?",
+    "id": "PUB-78",
+    "query": "Our factory produces prelaminated wood products used for furniture and interior panelling. Which standard covers dimensional requirements and surface finish?",
     "expected_standards": [
-      "IS 13000: 1990"
+      "IS 12823: 1990"
     ],
     "retrieved_standards": [
-      "IS 13000: 1990",
-      "IS 2096: 1992"
+      "IS 1659: 2004",
+      "IS 12823: 1990",
+      "IS 1328: 1996",
+      "IS 1331: 1971",
+      "IS 7316: 1974"
     ],
-    "latency_seconds": 0.043
+    "latency_seconds": 0.121
   },
   {
-    "id": "Q-038",
-    "query": "Our factory produces prestressed concrete pipes including fittings for water transmission mains. Which standard applies instead of IS 458?",
+    "id": "PUB-79",
+    "query": "We manufacture steel door, window and ventilator frames for residential construction. Which BIS standard defines the dimension and fabrication requirements?",
     "expected_standards": [
-      "IS 784: 2001"
+      "IS 1038: 1983"
     ],
     "retrieved_standards": [
-      "IS 458: 2003",
-      "IS 784: 2001"
+      "IS 4021: 1995",
+      "IS 1038: 1983",
+      "IS 6523: 1983",
+      "IS 7452: 1990",
+      "IS 1948: 1961"
     ],
-    "latency_seconds": 0.063
+    "latency_seconds": 0.121
   },
   {
-    "id": "Q-039",
-    "query": "We manufacture steel cylinder pipes with concrete lining and external coating for high-pressure water mains. Which BIS standard governs this composite pipe?",
+    "id": "PUB-80",
+    "query": "What is the standard for timber panelled and glazed doors used in residential and commercial buildings?",
     "expected_standards": [
-      "IS 1916: 1989"
+      "IS 1003 (Part 1): 2003"
     ],
     "retrieved_standards": [
-      "IS 1916: 1989",
-      "IS 784: 2001",
-      "IS 7322: 1985"
+      "IS 4021: 1995",
+      "IS 1003 (Part 1): 2003",
+      "IS 12896: 1990",
+      "IS 15476: 2004"
     ],
-    "latency_seconds": 0.053
+    "latency_seconds": 0.096
   },
   {
-    "id": "Q-040",
-    "query": "Our plant makes porous concrete pipes specifically designed for agricultural subsurface drainage. Which standard applies instead of IS 458?",
+    "id": "PUB-81",
+    "query": "We produce steel sliding shutters for industrial buildings and warehouses. Which BIS standard specifies the requirements?",
     "expected_standards": [
-      "IS 4350: 1967"
+      "IS 10451: 1983"
     ],
     "retrieved_standards": [
-      "IS 4350: 1967",
-      "IS 784: 2001"
+      "IS 10451: 1983",
+      "IS 1038: 1983",
+      "IS 13958: 1994",
+      "IS 15491: 2004"
     ],
-    "latency_seconds": 0.045
+    "latency_seconds": 0.106
   },
   {
-    "id": "Q-041",
-    "query": "We produce perforated concrete pipes used for irrigation drainage. How does this differ from porous concrete pipes in terms of BIS standards?",
+    "id": "PUB-82",
+    "query": "Our company makes cast iron rainwater pipes and fittings for buildings. What is the BIS specification that applies to these products?",
     "expected_standards": [
-      "IS 7319: 1974"
+      "IS 1230: 1979"
     ],
     "retrieved_standards": [
-      "IS 7319: 1974",
-      "IS 4350: 1967"
+      "IS 1230: 1979",
+      "IS 1538: 1993",
+      "IS 1879: 1987",
+      "IS 1626 (Part 1): 1994",
+      "IS 3989: 1984"
     ],
-    "latency_seconds": 0.059
+    "latency_seconds": 0.125
   },
   {
-    "id": "Q-042",
-    "query": "I need the standard covering hot-applied bituminous sealing compounds used for filling joints in concrete pavements and structures.",
+    "id": "PUB-83",
+    "query": "We manufacture galvanized steel chain link fence fabric for fencing applications. Which BIS standard covers the requirements?",
     "expected_standards": [
-      "IS 1834: 1984"
+      "IS 2721: 1979"
     ],
     "retrieved_standards": [
-      "IS 1834: 1984"
+      "IS 2721: 1979",
+      "IS 12427: 2001"
     ],
-    "latency_seconds": 0.058
+    "latency_seconds": 0.109
   },
   {
-    "id": "Q-043",
-    "query": "Our company supplies preformed non-extruding and resilient bituminous fillers for expansion joints in concrete roads. Which Part of IS 1838 is relevant?",
+    "id": "PUB-84",
+    "query": "What BIS standard applies to high density polyethylene (HDPE) films used as moisture barrier and damp-proof course material in construction?",
     "expected_standards": [
-      "IS 1838 (Part 1): 1983"
+      "IS 10889: 1984"
     ],
     "retrieved_standards": [
-      "IS 1838 (Part 1): 1983",
-      "IS 1838 (Part 2): 1984"
+      "IS 10889: 1984",
+      "IS 2508: 1984",
+      "IS 8360 (Part 1): 1977",
+      "IS 4984: 1995"
     ],
-    "latency_seconds": 0.067
+    "latency_seconds": 0.141
   },
   {
-    "id": "Q-044",
-    "query": "We manufacture preformed cork and other resilient material expansion joint fillers (non-bituminous). Which Part of IS 1838 applies?",
-    "expected_standards": [
-      "IS 1838 (Part 2): 1984"
-    ],
-    "retrieved_standards": [
-      "IS 1838 (Part 2): 1984",
-      "IS 1838 (Part 1): 1983"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-045",
-    "query": "A building specification calls for a two-part polysulphide-based sealant for structural glazing joints. Which BIS standard governs this product?",
-    "expected_standards": [
-      "IS 12118 (Part 1): 1987"
-    ],
-    "retrieved_standards": [
-      "IS 12118 (Part 1): 1987",
-      "IS 11433 (Part 1): 1985"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-046",
-    "query": "We supply one-part gun-applied polysulphide joint sealant for sealing movement joints in facades. What is the applicable BIS standard?",
+    "id": "PUB-85",
+    "query": "We produce one-part gun-grade polysulphide-based sealants for expansion joints in buildings. Which standard covers the general requirements?",
     "expected_standards": [
       "IS 11433 (Part 1): 1985"
     ],
@@ -548,1862 +1144,199 @@
       "IS 11433 (Part 1): 1985",
       "IS 12118 (Part 1): 1987"
     ],
-    "latency_seconds": 0.062
+    "latency_seconds": 0.173
   },
   {
-    "id": "Q-047",
-    "query": "Our MSE produces building lime used in construction mortars and plasters. Which BIS standard defines the grades and requirements for building lime?",
+    "id": "PUB-86",
+    "query": "What standard covers preformed bitumen impregnated fibre fillers for expansion joints in concrete pavements and structures?",
     "expected_standards": [
-      "IS 712: 1984"
+      "IS 1838 (Part 1): 1983"
     ],
     "retrieved_standards": [
-      "IS 712: 1984"
+      "IS 1838 (Part 1): 1983",
+      "IS 1838 (Part 2): 1984"
     ],
-    "latency_seconds": 0.051
+    "latency_seconds": 0.1
   },
   {
-    "id": "Q-048",
-    "query": "We use broken burnt clay bricks as coarse aggregate in lime concrete. Which BIS standard specifies requirements for such aggregate?",
+    "id": "PUB-87",
+    "query": "We supply coarse aggregate from broken quartzite rock for water bound macadam road construction. Which BIS standard covers quality and grading requirements?",
     "expected_standards": [
-      "IS 3068: 1986"
+      "IS 6579: 1981"
     ],
     "retrieved_standards": [
-      "IS 3068: 1986"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-049",
-    "query": "Our plant manufactures lime-based blocks for construction. Which BIS standard governs these blocks as distinct from concrete masonry blocks?",
-    "expected_standards": [
-      "IS 3115: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 3115: 1992",
-      "IS 712: 1984",
-      "IS 2185 (Part 2): 1983",
+      "IS 6579: 1981",
+      "IS 383: 1970",
       "IS 2686: 1977"
     ],
-    "latency_seconds": 0.052
+    "latency_seconds": 0.121
   },
   {
-    "id": "Q-050",
-    "query": "We produce lime-pozzolana mixture for use as a binding material in construction. Is there a BIS standard for this blended binder?",
+    "id": "PUB-88",
+    "query": "Our company needs the standard for asbestos cement pipes and fittings used for gravity-flow sewerage and drainage applications.",
     "expected_standards": [
-      "IS 4098: 1983"
+      "IS 6908: 1991"
     ],
     "retrieved_standards": [
-      "IS 4098: 1983",
-      "IS 10772: 1983"
+      "IS 6908: 1991",
+      "IS 1592: 2003",
+      "IS 1626 (Part 1): 1994",
+      "IS 1626: 1984",
+      "IS 1626 (Part 2): 1994"
     ],
-    "latency_seconds": 0.031
+    "latency_seconds": 0.13
   },
   {
-    "id": "Q-051",
-    "query": "Our factory makes calcium silicate bricks (sand-lime bricks) as an alternative to clay bricks. Which BIS standard applies?",
+    "id": "PUB-89",
+    "query": "We are looking for the standard governing precast reinforced concrete door and window frames for use up to 2.25 m opening width.",
     "expected_standards": [
-      "IS 4139: 1989"
+      "IS 6523: 1983"
     ],
     "retrieved_standards": [
-      "IS 4139: 1989",
-      "IS 12894: 2002"
+      "IS 6523: 1983",
+      "IS 14201: 1994"
     ],
-    "latency_seconds": 0.065
+    "latency_seconds": 0.141
   },
   {
-    "id": "Q-052",
-    "query": "We manufacture pulverized fuel ash and lime bricks, also called PFA-lime bricks, a fly ash based product. What standard governs these?",
+    "id": "PUB-90",
+    "query": "What is the standard for precast concrete lintels and sills used in building construction for spanning door and window openings?",
     "expected_standards": [
-      "IS 12894: 2002"
-    ],
-    "retrieved_standards": [
-      "IS 12894: 2002"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-053",
-    "query": "What is the BIS standard for quick-setting lime-pozzolana mixture that is different from the regular lime-pozzolana mixture?",
-    "expected_standards": [
-      "IS 10772: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 10772: 1983",
-      "IS 4098: 1983"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-054",
-    "query": "Our company supplies natural building stones for load-bearing masonry. Which standard specifies dimensions and workmanship for dressed stones?",
-    "expected_standards": [
-      "IS 1127: 1970"
-    ],
-    "retrieved_standards": [
-      "IS 1127: 1970"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-055",
-    "query": "We supply polished limestone slabs and tiles for flooring and cladding. Which BIS standard covers their requirements?",
-    "expected_standards": [
-      "IS 1128: 1974"
-    ],
-    "retrieved_standards": [
-      "IS 1128: 1974",
-      "IS 14223 (Part 1): 1995",
-      "IS 3622: 1977"
-    ],
-    "latency_seconds": 0.033
-  },
-  {
-    "id": "Q-056",
-    "query": "I need to source marble blocks and slabs for interior finishing. Which BIS standard defines the specifications for marble?",
-    "expected_standards": [
-      "IS 1130: 1969"
-    ],
-    "retrieved_standards": [
-      "IS 1130: 1969"
-    ],
-    "latency_seconds": 0.058
-  },
-  {
-    "id": "Q-057",
-    "query": "Our quarry produces structural granite used in building construction. Which BIS standard governs the requirements for structural granite?",
-    "expected_standards": [
-      "IS 3316: 1974"
-    ],
-    "retrieved_standards": [
-      "IS 3316: 1974",
-      "IS 14223 (Part 1): 1995"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-058",
-    "query": "We supply laterite stone blocks for masonry in coastal construction. Which BIS standard defines the requirements for laterite masonry blocks?",
-    "expected_standards": [
-      "IS 3620: 1979"
-    ],
-    "retrieved_standards": [
-      "IS 3620: 1979",
-      "IS 12440: 1988"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-059",
-    "query": "Our quarry produces sandstone slabs and tiles for flooring and paving applications. What BIS standard applies?",
-    "expected_standards": [
-      "IS 3622: 1977"
-    ],
-    "retrieved_standards": [
-      "IS 3622: 1977",
-      "IS 1128: 1974"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-060",
-    "query": "We manufacture roofing slate tiles from naturally occurring slate. Which BIS standard covers quality and dimensional requirements?",
-    "expected_standards": [
-      "IS 6250: 1981"
-    ],
-    "retrieved_standards": [
-      "IS 6250: 1981"
-    ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-061",
-    "query": "Our company sources coarse aggregate specifically for water-bound macadam road construction. Which standard is different from the concrete aggregate standard?",
-    "expected_standards": [
-      "IS 6579: 1981"
-    ],
-    "retrieved_standards": [
-      "IS 6579: 1981"
-    ],
-    "latency_seconds": 0.058
-  },
-  {
-    "id": "Q-062",
-    "query": "We supply stone lintels used over door and window openings in masonry construction. What BIS standard covers their dimensional and strength requirements?",
-    "expected_standards": [
-      "IS 9394: 1979"
-    ],
-    "retrieved_standards": [
-      "IS 3620: 1979",
-      "IS 9394: 1979",
       "IS 9893: 1981"
     ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-063",
-    "query": "What BIS standard covers polished building stones used for flooring and cladding purposes?",
-    "expected_standards": [
-      "IS 14223 (Part 1): 1995"
-    ],
-    "retrieved_standards": [
-      "IS 14223 (Part 1): 1995",
-      "IS 12894: 2002",
-      "IS 1127: 1970"
-    ],
-    "latency_seconds": 0.036
-  },
-  {
-    "id": "Q-064",
-    "query": "We make common burnt clay building bricks for general construction. Which BIS standard should we comply with?",
-    "expected_standards": [
-      "IS 1077: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 1077: 1992",
-      "IS 13757: 1993"
-    ],
-    "latency_seconds": 0.043
-  },
-  {
-    "id": "Q-065",
-    "query": "Our plant produces heavy-duty burnt clay bricks for industrial flooring. How do these differ from common bricks in BIS standards?",
-    "expected_standards": [
-      "IS 2180: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 1077: 1992",
-      "IS 14223 (Part 1): 1995",
-      "IS 2180: 1988",
-      "IS 13757: 1993"
-    ],
-    "latency_seconds": 0.067
-  },
-  {
-    "id": "Q-066",
-    "query": "We manufacture perforated burnt clay bricks with holes running through the body to reduce weight. Which BIS standard governs these?",
-    "expected_standards": [
-      "IS 2222: 1991"
-    ],
-    "retrieved_standards": [
-      "IS 2222: 1991"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-067",
-    "query": "Our factory makes facing bricks with high quality external appearance for exposed brickwork. Is there a separate standard from common bricks?",
-    "expected_standards": [
-      "IS 2691: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 2691: 1988",
-      "IS 1077: 1992"
-    ],
-    "latency_seconds": 0.063
-  },
-  {
-    "id": "Q-068",
-    "query": "We supply paving bricks for pathways and driveways subject to pedestrian and light vehicle traffic. Which standard applies?",
-    "expected_standards": [
-      "IS 3583: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 3583: 1988",
-      "IS 4885: 1988"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-069",
-    "query": "I need the BIS standard for hollow clay bricks used for non-load-bearing partition walls in buildings.",
-    "expected_standards": [
-      "IS 3952: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 2185 (Part 1): 1979",
-      "IS 3952: 1988",
-      "IS 2185 (Part 2): 1983"
-    ],
-    "latency_seconds": 0.048
-  },
-  {
-    "id": "Q-070",
-    "query": "Our factory produces sewer bricks designed to resist chemical attack in municipal sewage systems. Which specific standard applies?",
-    "expected_standards": [
-      "IS 4885: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 4885: 1988",
-      "IS 4860: 1968"
-    ],
-    "latency_seconds": 0.036
-  },
-  {
-    "id": "Q-071",
-    "query": "We manufacture burnt clay soling bricks used as foundation soling layer under floors. Is there a dedicated BIS standard?",
-    "expected_standards": [
-      "IS 5779: 1986"
-    ],
-    "retrieved_standards": [
-      "IS 5779: 1986",
-      "IS 14223 (Part 1): 1995"
-    ],
-    "latency_seconds": 0.058
-  },
-  {
-    "id": "Q-072",
-    "query": "Our plant makes bricks incorporating fly ash into the clay body as an eco-friendly product. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 13757: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 13757: 1993",
-      "IS 12894: 2002"
-    ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-073",
-    "query": "We produce burnt clay jali screens used decoratively on building facades for ventilation. What BIS standard applies to these lattice elements?",
-    "expected_standards": [
-      "IS 7556: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 7556: 1988",
-      "IS 13757: 1993",
-      "IS 14223 (Part 1): 1995"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-074",
-    "query": "Our factory makes Mangalore pattern clay roofing tiles for pitched roof construction. Which BIS standard governs their dimensions and requirements?",
-    "expected_standards": [
-      "IS 654: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 654: 1992"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-075",
-    "query": "We supply clay ridge tiles and ceiling tiles used at ridge junctions and overhead in buildings. Is there a dedicated standard separate from roofing tiles?",
-    "expected_standards": [
-      "IS 1464: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 1464: 1992"
-    ],
-    "latency_seconds": 0.061
-  },
-  {
-    "id": "Q-076",
-    "query": "Our company produces clay flooring tiles for interior floor finishes. Which standard governs the strength and dimensional requirements?",
-    "expected_standards": [
-      "IS 1478: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 1478: 1992",
-      "IS 3462: 1986"
-    ],
-    "latency_seconds": 0.042
-  },
-  {
-    "id": "Q-077",
-    "query": "We manufacture burnt clay tiles used specifically for lining irrigation canals and drainage works to prevent seepage. Which standard is applicable?",
-    "expected_standards": [
-      "IS 3367: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 3367: 1993"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-078",
-    "query": "Our plant produces flat terracing clay tiles used as flooring on roof terraces. Which Part of IS 2690 applies?",
-    "expected_standards": [
-      "IS 2690 (Part 2): 1992"
-    ],
-    "retrieved_standards": [
-      "IS 2690 (Part 1): 1993",
-      "IS 2690 (Part 2): 1992"
-    ],
-    "latency_seconds": 0.062
-  },
-  {
-    "id": "Q-079",
-    "query": "We manufacture hollow clay tile blocks for floor filling in ribbed slab construction. Which Part of IS 3951 covers floor-filling units?",
-    "expected_standards": [
-      "IS 3951 (Part 1): 1975"
-    ],
-    "retrieved_standards": [
-      "IS 3951 (Part 2): 1975",
-      "IS 3951 (Part 1): 1975"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-080",
-    "query": "Our company makes country pattern clay roofing tiles (non-Mangalore type). Is there a BIS standard separate from IS 654 for these?",
-    "expected_standards": [
-      "IS 13317: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 654: 1992",
-      "IS 2690 (Part 1): 1993"
-    ],
-    "latency_seconds": 0.049
-  },
-  {
-    "id": "Q-081",
-    "query": "We manufacture gypsum plasterboard panels for dry-wall partition systems. Which BIS standard specifies their properties?",
-    "expected_standards": [
-      "IS 2095 (Part 1): 1996"
-    ],
-    "retrieved_standards": [
-      "IS 2095 (Part 3): 1996",
-      "IS 2095 (Part 1): 1996",
-      "IS 2547 (Part 2): 1976"
-    ],
-    "latency_seconds": 0.041
-  },
-  {
-    "id": "Q-082",
-    "query": "Our plant supplies non-load-bearing gypsum partition blocks for interior walls. Which standard is applicable?",
-    "expected_standards": [
-      "IS 2849: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 2849: 1983"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-083",
-    "query": "We produce gypsum building plaster for internal plastering. Is there a BIS standard for its composition and fineness?",
-    "expected_standards": [
-      "IS 2547 (Part 1): 1976"
-    ],
-    "retrieved_standards": [
-      "IS 2547 (Part 1): 1976",
-      "IS 2547 (Part 2): 1976",
-      "IS 2095 (Part 1): 1996",
-      "IS 8272: 1984"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-084",
-    "query": "What is the BIS standard for gypsum plaster specifically used in the manufacture of fibrous plaster products?",
-    "expected_standards": [
-      "IS 8272: 1984"
-    ],
-    "retrieved_standards": [
-      "IS 8272: 1984",
-      "IS 2095 (Part 1): 1996"
-    ],
-    "latency_seconds": 0.033
-  },
-  {
-    "id": "Q-085",
-    "query": "We are a timber merchant dealing in coniferous sawn timber baulks and scantlings. Which BIS standard should our products comply with?",
-    "expected_standards": [
-      "IS 190: 1991"
-    ],
-    "retrieved_standards": [
-      "IS 190: 1991",
-      "IS 1326: 1992"
-    ],
-    "latency_seconds": 0.076
-  },
-  {
-    "id": "Q-086",
-    "query": "We supply non-coniferous hardwood sawn timber for structural carpentry. Which BIS standard governs baulks and scantlings of these species?",
-    "expected_standards": [
-      "IS 1326: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 1326: 1992",
-      "IS 190: 1991"
-    ],
-    "latency_seconds": 0.07
-  },
-  {
-    "id": "Q-087",
-    "query": "Our sawmill produces cut sizes of timber for joinery and furniture. Which BIS standard defines preferred cut dimensions?",
-    "expected_standards": [
-      "IS 1331: 1971"
-    ],
-    "retrieved_standards": [
-      "IS 3731: 1985",
-      "IS 1326: 1992"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-088",
-    "query": "We supply teak squares for premium structural and decorative applications. Is there a BIS standard specific to teak squares?",
-    "expected_standards": [
-      "IS 3731: 1985"
-    ],
-    "retrieved_standards": [
-      "IS 3731: 1985"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-089",
-    "query": "Our company sources timber specifically for cooling towers in industrial facilities. Which standard defines acceptable timber species and properties?",
-    "expected_standards": [
-      "IS 2372: 2004"
-    ],
-    "retrieved_standards": [
-      "IS 2372: 2004",
-      "IS 3629: 1986"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-090",
-    "query": "We supply structural timber for use in building construction. Which standard covers its grading and strength classification?",
-    "expected_standards": [
-      "IS 3629: 1986"
-    ],
-    "retrieved_standards": [
-      "IS 3629: 1986",
-      "IS 1326: 1992"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-091",
-    "query": "We produce ordinary plywood for general furniture and construction. Which standard applies versus structural plywood?",
-    "expected_standards": [
-      "IS 303: 1989"
-    ],
-    "retrieved_standards": [
-      "IS 10701: 1983",
-      "IS 1328: 1996"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-092",
-    "query": "Our plant manufactures structural plywood for load-bearing applications in building construction. Which standard is different from ordinary plywood?",
-    "expected_standards": [
-      "IS 10701: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 10701: 1983",
-      "IS 3308: 1981",
-      "IS 2098: 1997"
-    ],
-    "latency_seconds": 0.058
-  },
-  {
-    "id": "Q-093",
-    "query": "We supply veneered decorative plywood for high-quality interior surface finishes. Which BIS standard governs this product?",
-    "expected_standards": [
-      "IS 1328: 1996"
-    ],
-    "retrieved_standards": [
-      "IS 1328: 1996"
-    ],
-    "latency_seconds": 0.031
-  },
-  {
-    "id": "Q-094",
-    "query": "Our company produces medium density fibreboard (MDF) for general purposes. Which BIS standard should we comply with?",
-    "expected_standards": [
-      "IS 12406: 2003"
-    ],
-    "retrieved_standards": [
-      "IS 12406: 2003"
-    ],
-    "latency_seconds": 0.065
-  },
-  {
-    "id": "Q-095",
-    "query": "We make pre-laminated medium density fibre boards with decorative surface finish. Is there a standard separate from plain MDF?",
-    "expected_standards": [
-      "IS 14587: 1998"
-    ],
-    "retrieved_standards": [
-      "IS 14587: 1998",
-      "IS 12406: 2003"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-096",
-    "query": "Our factory produces bamboo mat boards used as general construction panels. Which BIS standard covers this emerging material?",
-    "expected_standards": [
-      "IS 13958: 1994"
-    ],
-    "retrieved_standards": [
-      "IS 13958: 1994",
-      "IS 15476: 2004"
-    ],
-    "latency_seconds": 0.046
-  },
-  {
-    "id": "Q-097",
-    "query": "We supply cement-bonded particle boards for use as external sheathing and partition material. Which standard applies?",
-    "expected_standards": [
-      "IS 14276: 1995"
-    ],
-    "retrieved_standards": [
-      "IS 14276: 1995"
-    ],
-    "latency_seconds": 0.03
-  },
-  {
-    "id": "Q-098",
-    "query": "Our company produces pre-laminated particle boards with a decorative surface. Which BIS standard covers this product?",
-    "expected_standards": [
-      "IS 12823: 1990"
-    ],
-    "retrieved_standards": [
-      "IS 12823: 1990",
-      "IS 14587: 1998",
-      "IS 14276: 1995"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-099",
-    "query": "We make bitumen felt for waterproofing of flat roofs and damp-proofing of basements. Which BIS standard specifies grades and properties?",
-    "expected_standards": [
-      "IS 1322: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 1322: 1993",
-      "IS 809: 1992",
-      "IS 702: 1988"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-100",
-    "query": "Our plant produces oxidized bitumen used for waterproofing applications. Which BIS standard governs its grades?",
-    "expected_standards": [
-      "IS 702: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 702: 1988",
-      "IS 3117: 2004",
-      "IS 73: 1992",
-      "IS 454: 1994"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-101",
-    "query": "We supply mastic asphalt for flooring and damp-proof course applications. Which BIS standard covers industrial flooring mastic?",
-    "expected_standards": [
-      "IS 13026: 1991"
-    ],
-    "retrieved_standards": [
-      "IS 1195: 2002"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-102",
-    "query": "I need the standard for blown bitumen (oxidized) grades used in manufacture of bituminous paints and roof coatings.",
-    "expected_standards": [
-      "IS 702: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 454: 1994",
-      "IS 1580: 1991",
-      "IS 702: 1988",
-      "IS 1195: 2002"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-103",
-    "query": "Our company produces silicone-based water repellent treatments for masonry surfaces. Which BIS standard applies to this product?",
-    "expected_standards": [
-      "IS 12027: 1987"
-    ],
-    "retrieved_standards": [
-      "IS 12027: 1987"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-104",
-    "query": "We supply glass fibre base coal tar pitch outer wraps for buried pipeline corrosion protection. Which standard governs this product?",
-    "expected_standards": [
-      "IS 14695: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 14695: 1999",
-      "IS 212: 1983"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-105",
-    "query": "Our plant manufactures flat transparent sheet glass for windows and glazing. Which BIS standard specifies grades and dimensional tolerances?",
-    "expected_standards": [
-      "IS 2835: 1987"
-    ],
-    "retrieved_standards": [
-      "IS 2835: 1987",
-      "IS 2553 (Part 1): 1990"
-    ],
-    "latency_seconds": 0.041
-  },
-  {
-    "id": "Q-106",
-    "query": "We produce figured, rolled, and wired glass for translucent architectural applications. Which standard applies instead of the clear sheet glass standard?",
-    "expected_standards": [
-      "IS 5437: 1994"
-    ],
-    "retrieved_standards": [
-      "IS 5437: 1994",
-      "IS 2835: 1987"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-107",
-    "query": "What BIS standard governs centrifugally cast (spun) iron pressure pipes used for water, gas, and sewage distribution?",
-    "expected_standards": [
-      "IS 1536: 2001"
-    ],
-    "retrieved_standards": [
-      "IS 1536: 2001",
-      "IS 6163: 1978",
-      "IS 8329: 2000"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-108",
-    "query": "We supply cast iron fittings such as bends, tees, and reducers for pressure pipelines. Which standard covers these fittings separately from the pipe standard?",
-    "expected_standards": [
-      "IS 1538: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 1879: 1987",
-      "IS 12709: 1994",
-      "IS 1538: 1993"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-109",
-    "query": "Our factory makes steel door and window frames for residential construction. Which BIS standard specifies dimensions and performance?",
-    "expected_standards": [
-      "IS 1038: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 4021: 1995",
-      "IS 4351: 2003",
-      "IS 1038: 1983",
-      "IS 6523: 1983"
-    ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-110",
-    "query": "We manufacture steel windows specifically for industrial buildings with larger spans. Is there a separate standard from the residential window standard?",
-    "expected_standards": [
-      "IS 1361: 1978"
-    ],
-    "retrieved_standards": [
-      "IS 1361: 1978",
-      "IS 1949: 1961"
-    ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-111",
-    "query": "Our company produces timber panelled and glazed door shutters. Which standard defines their construction and workmanship?",
-    "expected_standards": [
-      "IS 1003 (Part 1): 2003"
-    ],
-    "retrieved_standards": [
-      "IS 1003 (Part 1): 2003",
-      "IS 1003 (Part 2): 1994",
-      "IS 6198: 1992"
-    ],
-    "latency_seconds": 0.043
-  },
-  {
-    "id": "Q-112",
-    "query": "We manufacture flush doors with solid core or hollow core for interior use. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 2202 (Part 1): 1991"
-    ],
-    "retrieved_standards": [
-      "IS 2191 (Part 1): 1983",
-      "IS 2202 (Part 1): 1999",
-      "IS 2185 (Part 1): 1979",
-      "IS 2191 (Part 2): 1983"
-    ],
-    "latency_seconds": 0.058
-  },
-  {
-    "id": "Q-113",
-    "query": "Our factory produces steel butt hinges for door and window installations. Which standard governs their dimensions and strength?",
-    "expected_standards": [
-      "IS 1341: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 1341: 1992",
-      "IS 205: 1992",
-      "IS 9106: 1979",
-      "IS 6523: 1983"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-114",
-    "query": "We supply stainless steel butt hinges as a corrosion-resistant option. Is there a separate standard from the mild steel hinge standard?",
-    "expected_standards": [
-      "IS 12817: 1997"
-    ],
-    "retrieved_standards": [
-      "IS 9106: 1979",
-      "IS 12817: 1997",
-      "IS 1341: 1992",
-      "IS 205: 1992"
-    ],
-    "latency_seconds": 0.049
-  },
-  {
-    "id": "Q-115",
-    "query": "Our company makes rim latches for internal doors. Which BIS standard governs their design and performance?",
-    "expected_standards": [
-      "IS 1019: 1974"
-    ],
-    "retrieved_standards": [
-      "IS 1019: 1974",
-      "IS 9131: 1979"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-116",
-    "query": "We supply hydraulically operated concealed door closers. Which BIS standard applies to this product?",
-    "expected_standards": [
-      "IS 14912: 2001"
-    ],
-    "retrieved_standards": [
-      "IS 14912: 2001",
-      "IS 2681: 1993"
-    ],
-    "latency_seconds": 0.033
-  },
-  {
-    "id": "Q-117",
-    "query": "We make hook bolts used for fixing corrugated sheet roofing to purlins. Which BIS standard governs these fasteners?",
-    "expected_standards": [
-      "IS 730: 1978"
-    ],
-    "retrieved_standards": [
-      "IS 730: 1978"
-    ],
-    "latency_seconds": 0.059
-  },
-  {
-    "id": "Q-118",
-    "query": "Our plant manufactures high-strength structural bolts for steel-to-steel connections in bridges and buildings. Which standard applies?",
-    "expected_standards": [
-      "IS 3757: 1985"
-    ],
-    "retrieved_standards": [
-      "IS 3757: 1985",
-      "IS 4621: 1975",
-      "IS 6639: 1972",
-      "IS 6623: 2004"
-    ],
-    "latency_seconds": 0.078
-  },
-  {
-    "id": "Q-119",
-    "query": "We supply foundation bolts for anchoring structural steel columns to concrete foundations. Which BIS standard is relevant?",
-    "expected_standards": [
-      "IS 5624: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 5624: 1993"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-120",
-    "query": "Our company makes hot forged steel rivets for structural steel connections. Which standard applies for rivets in the 12-36 mm diameter range?",
-    "expected_standards": [
-      "IS 1929: 1982"
-    ],
-    "retrieved_standards": [
-      "IS 1929: 1982",
-      "IS 2155: 1982",
-      "IS 2998: 1982"
-    ],
-    "latency_seconds": 0.089
-  },
-  {
-    "id": "Q-121",
-    "query": "We produce TMT reinforcing bars (thermo-mechanically treated) for RCC construction. Which BIS standard governs yield strength and elongation requirements?",
-    "expected_standards": [
-      "IS 1786: 1985"
-    ],
-    "retrieved_standards": [
-      "IS 432 (Part 1): 1982",
-      "IS 2090: 1983",
-      "IS 13620: 1993",
-      "IS 8500: 1991"
-    ],
-    "latency_seconds": 0.069
-  },
-  {
-    "id": "Q-122",
-    "query": "Our plant makes fusion-bonded epoxy coated reinforcing bars for use in corrosive and marine environments. Which standard applies?",
-    "expected_standards": [
-      "IS 13620: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 13620: 1993"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-123",
-    "query": "We supply mild steel and medium tensile steel bars for general structural use in plain and reinforced concrete. Which standard applies?",
-    "expected_standards": [
-      "IS 432 (Part 1): 1982"
-    ],
-    "retrieved_standards": [
-      "IS 432 (Part 1): 1982",
-      "IS 14143: 1994",
-      "IS 2090: 1983",
-      "IS 13990: 1994"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-124",
-    "query": "Our mill produces hot-rolled steel angles, channels, and beams (standard sections). Which BIS standard covers these structural sections?",
-    "expected_standards": [
-      "IS 2062: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 808: 1989",
-      "IS 3954: 1991",
-      "IS 1361: 1978"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-125",
-    "query": "We manufacture hot-rolled parallel flange beam and column sections (HEB/HEA type). Which BIS standard governs their dimensions?",
-    "expected_standards": [
-      "IS 12778: 2004"
-    ],
-    "retrieved_standards": [
-      "IS 12778: 2004",
-      "IS 808: 1989"
-    ],
-    "latency_seconds": 0.057
-  },
-  {
-    "id": "Q-126",
-    "query": "Our factory produces structural hollow steel sections (SHS/RHS) for columns and trusses. Which standard applies?",
-    "expected_standards": [
-      "IS 4923: 1997"
-    ],
-    "retrieved_standards": [
-      "IS 4923: 1997",
-      "IS 1285: 2002"
-    ],
-    "latency_seconds": 0.041
-  },
-  {
-    "id": "Q-127",
-    "query": "We supply steel tubes specifically for structural purposes such as trusses and handrails. Is the applicable standard different from plumbing steel tubes?",
-    "expected_standards": [
-      "IS 1161: 1998"
-    ],
-    "retrieved_standards": [
-      "IS 1239 (Part 1): 2004",
-      "IS 1161: 1998",
-      "IS 4270: 2001",
-      "IS 738: 1994"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-128",
-    "query": "Our plant produces structural weather-resistant steel for exposed steel structures. Which standard covers the atmospheric corrosion resistance requirements?",
-    "expected_standards": [
-      "IS 11587: 1986"
-    ],
-    "retrieved_standards": [
-      "IS 11587: 1986"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-129",
-    "query": "We supply corrugated aluminium sheets for lightweight roofing. Which BIS standard governs their dimensions and mechanical properties?",
-    "expected_standards": [
-      "IS 1254: 1991"
-    ],
-    "retrieved_standards": [
-      "IS 1254: 1991",
-      "IS 730: 1978"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-130",
-    "query": "Our plant makes galvanized corrugated steel sheets for roofing and cladding. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 277: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 277: 2003",
-      "IS 1254: 1991",
-      "IS 14871: 2000",
-      "IS 12866: 1989"
-    ],
-    "latency_seconds": 0.045
-  },
-  {
-    "id": "Q-131",
-    "query": "We produce hot-dip terne-coated (lead-tin alloy) carbon steel sheets for roofing. Which BIS standard covers this product?",
-    "expected_standards": [
-      "IS 12313: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 12313: 1988"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-132",
-    "query": "We supply covered electrodes for manual metal arc welding of structural mild steel. Which BIS standard applies to these consumables?",
-    "expected_standards": [
-      "IS 814: 2004"
-    ],
-    "retrieved_standards": [
-      "IS 1395: 1982",
-      "IS 5511: 1991"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-133",
-    "query": "Our company makes filler rods and wires for gas welding of steel. Which standard covers these products?",
-    "expected_standards": [
-      "IS 1278: 1972"
-    ],
-    "retrieved_standards": [
-      "IS 5898: 1970",
-      "IS 5897: 1985",
-      "IS 6560: 1996"
-    ],
-    "latency_seconds": 0.046
-  },
-  {
-    "id": "Q-134",
-    "query": "We manufacture galvanized steel barbed wire for security fencing. Which BIS standard governs its manufacture?",
-    "expected_standards": [
-      "IS 278: 1978"
-    ],
-    "retrieved_standards": [
-      "IS 278: 1978"
-    ],
-    "latency_seconds": 0.039
-  },
-  {
-    "id": "Q-135",
-    "query": "Our company produces chain link fence fabric from galvanized steel wire. Which standard applies?",
-    "expected_standards": [
-      "IS 2721: 2003"
-    ],
     "retrieved_standards": [
-      "IS 2721: 1979"
+      "IS 9893: 1981"
     ],
-    "latency_seconds": 0.044
+    "latency_seconds": 0.122
   },
   {
-    "id": "Q-136",
-    "query": "We produce expanded polystyrene (EPS) boards for thermal insulation in walls and roofs. Which BIS standard specifies density grades and thermal properties?",
+    "id": "PUB-91",
+    "query": "We produce porous concrete pipes for underground drainage and sub-soil drainage applications. Which BIS standard should we comply with?",
     "expected_standards": [
-      "IS 4671: 1984"
+      "IS 4350: 1967"
     ],
     "retrieved_standards": [
-      "IS 4671: 1984"
+      "IS 4350: 1967",
+      "IS 11925: 1986",
+      "IS 458: 2003",
+      "IS 7319: 1974",
+      "IS 6908: 1991"
     ],
-    "latency_seconds": 0.05
+    "latency_seconds": 0.119
   },
   {
-    "id": "Q-137",
-    "query": "Our company supplies bonded mineral wool slabs for thermal insulation of building envelopes. Which standard applies?",
+    "id": "PUB-92",
+    "query": "What standard applies to unbonded rock and slag wool for thermal insulation used in building walls and roofs?",
     "expected_standards": [
-      "IS 8183: 1993"
+      "IS 3677: 1985"
     ],
     "retrieved_standards": [
-      "IS 8183: 1993",
+      "IS 3677: 1985",
       "IS 9742: 1993"
     ],
-    "latency_seconds": 0.048
+    "latency_seconds": 0.104
   },
   {
-    "id": "Q-138",
-    "query": "We manufacture rock wool and slag wool in loose unbonded form for thermal insulation. Which BIS standard governs this product?",
+    "id": "PUB-93",
+    "query": "Our company supplies silicone-based water repellent compounds for treatment of masonry and concrete surfaces. Which BIS standard governs this?",
     "expected_standards": [
-      "IS 3677: 1985"
+      "IS 12027: 1987"
     ],
     "retrieved_standards": [
-      "IS 3677: 1985"
+      "IS 12027: 1987",
+      "IS 1834: 1984",
+      "IS 809: 1992"
     ],
-    "latency_seconds": 0.047
+    "latency_seconds": 0.117
   },
   {
-    "id": "Q-139",
-    "query": "Our plant makes preformed rigid polyurethane foam boards for thermal insulation of cold storage facilities. Which BIS standard covers PUR foam insulation?",
+    "id": "PUB-94",
+    "query": "We produce asbestos cement flat sheets (both semi-compressed and fully compressed) for building cladding. What BIS standard applies?",
     "expected_standards": [
-      "IS 12436: 1988"
+      "IS 2096: 1992"
     ],
     "retrieved_standards": [
-      "IS 12436: 1988"
+      "IS 2096: 1992",
+      "IS 14871: 2000",
+      "IS 13000: 1990",
+      "IS 459: 1992",
+      "IS 13008: 1990"
     ],
-    "latency_seconds": 0.048
+    "latency_seconds": 0.115
   },
   {
-    "id": "Q-140",
-    "query": "We supply rigid phenolic foam boards for fire-performance thermal insulation. Which standard applies, distinct from polyurethane foam?",
+    "id": "PUB-95",
+    "query": "What standard covers precast concrete coping blocks used on top of walls to provide weather protection?",
     "expected_standards": [
-      "IS 13204: 1991"
+      "IS 5751: 1984"
     ],
     "retrieved_standards": [
-      "IS 12436: 1988",
-      "IS 13204: 1991"
+      "IS 5751: 1984"
     ],
-    "latency_seconds": 0.052
+    "latency_seconds": 0.129
   },
   {
-    "id": "Q-141",
-    "query": "Our company produces cellular glass blocks and pipe sections for high-temperature thermal insulation. Which BIS standard governs this product?",
+    "id": "PUB-96",
+    "query": "Our plant produces precast concrete stone masonry blocks used for load-bearing and non-load-bearing wall construction. Which BIS standard applies?",
     "expected_standards": [
-      "IS 11307: 1985"
+      "IS 12440: 1988"
     ],
     "retrieved_standards": [
-      "IS 11307: 1985"
+      "IS 12440: 1988",
+      "IS 2185 (Part 1): 1979",
+      "IS 2185 (Part 2): 1983"
     ],
-    "latency_seconds": 0.054
+    "latency_seconds": 0.152
   },
   {
-    "id": "Q-142",
-    "query": "We supply preformed calcium silicate insulation for pipe and equipment insulation at temperatures up to 650°C. Which BIS standard applies?",
+    "id": "PUB-97",
+    "query": "We need the specification for autoclaved reinforced cellular concrete wall slabs having density above 450 and up to 1000 kg/m3.",
     "expected_standards": [
-      "IS 8154: 1993"
+      "IS 6072: 1971"
     ],
     "retrieved_standards": [
-      "IS 9428: 1993",
-      "IS 8154: 1993"
+      "IS 6072: 1971",
+      "IS 6073: 1971",
+      "IS 2185 (Part 3): 1984"
     ],
-    "latency_seconds": 0.067
+    "latency_seconds": 0.135
   },
   {
-    "id": "Q-143",
-    "query": "Our plant makes preformed fibrous pipe insulation sections from mineral fibre for HVAC applications. Which BIS standard is relevant?",
+    "id": "PUB-98",
+    "query": "What BIS standard covers shallow corrugated asbestos cement sheets and their material, dimensional and impermeability requirements?",
     "expected_standards": [
-      "IS 9842: 1994"
+      "IS 13008: 1990"
     ],
     "retrieved_standards": [
-      "IS 9842: 1994"
+      "IS 13008: 1990",
+      "IS 14871: 2000",
+      "IS 459: 1992",
+      "IS 13000: 1990"
     ],
-    "latency_seconds": 0.046
+    "latency_seconds": 0.103
   },
   {
-    "id": "Q-144",
-    "query": "We supply thermal insulating cements for coating insulated surfaces. Which BIS standard governs these finishing products?",
+    "id": "PUB-99",
+    "query": "We manufacture precast reinforced concrete L-panels for roof construction. Which BIS standard should our products conform to?",
     "expected_standards": [
-      "IS 7509: 1993"
+      "IS 14241: 1995"
     ],
     "retrieved_standards": [
-      "IS 9743: 1990",
-      "IS 7509: 1993"
+      "IS 14241: 1995",
+      "IS 14201: 1994"
     ],
-    "latency_seconds": 0.046
+    "latency_seconds": 0.101
   },
   {
-    "id": "Q-145",
-    "query": "Our company produces PVC insulated cables for working voltages up to 1100 V for building wiring. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 694: 1990"
-    ],
-    "retrieved_standards": [
-      "IS 694: 1990",
-      "IS 14753: 1999"
-    ],
-    "latency_seconds": 0.057
-  },
-  {
-    "id": "Q-146",
-    "query": "We supply PVC insulated heavy-duty cables. Which Part of IS 1554 covers power cables up to 1100 V?",
-    "expected_standards": [
-      "IS 1554 (Part 1): 1988"
-    ],
-    "retrieved_standards": [
-      "IS 1554 (Part 1): 1988",
-      "IS 14753: 1999"
-    ],
-    "latency_seconds": 0.05
-  },
-  {
-    "id": "Q-147",
-    "query": "Our plant makes rigid steel conduits for surface and concealed wiring in buildings. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 9537 (Part 2): 1981"
-    ],
-    "retrieved_standards": [
-      "IS 3837: 1976",
-      "IS 9537 (Part 2): 1981",
-      "IS 2667: 1988"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-148",
-    "query": "We manufacture rigid non-metallic (PVC) conduits for electrical wiring. Which Part of IS 9537 is applicable?",
-    "expected_standards": [
-      "IS 9537 (Part 3): 1983"
-    ],
-    "retrieved_standards": [
-      "IS 9537 (Part 2): 1981",
-      "IS 9537 (Part 3): 1983"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-149",
-    "query": "Our company supplies fittings such as bends, couplings, and inspection boxes for rigid steel conduit wiring systems. Which standard applies?",
-    "expected_standards": [
-      "IS 2667: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 2667: 1988",
-      "IS 2412: 1975",
-      "IS 3419: 1989"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-150",
-    "query": "We manufacture domestic switches for residential electrical installations. Which BIS standard governs their rating and performance?",
-    "expected_standards": [
-      "IS 3854: 1997"
-    ],
-    "retrieved_standards": [
-      "IS 3854: 1997",
-      "IS 4615: 1968"
-    ],
-    "latency_seconds": 0.034
-  },
-  {
-    "id": "Q-151",
-    "query": "Our company produces plugs and socket outlets rated up to 250V for household use. Which standard covers these products?",
-    "expected_standards": [
-      "IS 1293: 1988"
-    ],
-    "retrieved_standards": [
-      "IS 1293: 1988"
-    ],
-    "latency_seconds": 0.066
-  },
-  {
-    "id": "Q-152",
-    "query": "We make circuit breakers for overcurrent protection in household and similar electrical installations. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 8828: 1996"
-    ],
-    "retrieved_standards": [
-      "IS 8828: 1996"
-    ],
-    "latency_seconds": 0.043
-  },
-  {
-    "id": "Q-153",
-    "query": "Our plant produces ceiling roses for electrical wiring connections. Which BIS standard governs their construction?",
-    "expected_standards": [
-      "IS 371: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 371: 1999",
-      "IS 9968 (Part 1): 1998"
-    ],
-    "latency_seconds": 0.043
-  },
-  {
-    "id": "Q-154",
-    "query": "We supply enclosures for electrical accessories for household and fixed electrical installations rated up to 440V. Which standard applies?",
-    "expected_standards": [
-      "IS 14772: 2000"
-    ],
-    "retrieved_standards": [
-      "IS 14772: 2000"
-    ],
-    "latency_seconds": 0.056
-  },
-  {
-    "id": "Q-155",
-    "query": "Our company makes low density polyethylene (LDPE) films for damp-proofing and general construction use. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 2508: 1984"
-    ],
-    "retrieved_standards": [
-      "IS 2508: 1984",
-      "IS 10889: 1984"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-156",
-    "query": "We produce polycarbonate sheets for rooflight applications and transparent cladding. Which BIS standard governs their specification?",
-    "expected_standards": [
-      "IS 14443: 1997"
-    ],
-    "retrieved_standards": [
-      "IS 14443: 1997",
-      "IS 14871: 2000"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-157",
-    "query": "Our factory makes rigid PVC sheets for lining tanks and chemical-resistant cladding. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 6307: 1985"
-    ],
-    "retrieved_standards": [
-      "IS 14443: 1997",
-      "IS 737: 1986",
-      "IS 6307: 1985"
-    ],
-    "latency_seconds": 0.045
-  },
-  {
-    "id": "Q-158",
-    "query": "We supply epoxy adhesives for room-temperature curing in general construction bonding applications. Which BIS standard is relevant?",
-    "expected_standards": [
-      "IS 12994: 1990"
-    ],
-    "retrieved_standards": [
-      "IS 12994: 1990"
-    ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-159",
-    "query": "Our company produces PTFE thread seal tape used for sealing pipe threaded joints in plumbing. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 14643: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 14643: 1999"
-    ],
-    "latency_seconds": 0.049
-  },
-  {
-    "id": "Q-160",
-    "query": "We manufacture cement concrete flooring tiles for industrial and commercial floors. Which BIS standard governs their strength requirements?",
-    "expected_standards": [
-      "IS 1237: 1980"
-    ],
-    "retrieved_standards": [
-      "IS 1237: 1980",
-      "IS 4860: 1968",
-      "IS 3951 (Part 1): 1975"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-161",
-    "query": "Our company makes decorative thermosetting laminated sheets (like Formica type) for furniture and interior surfaces. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 2046: 1995"
-    ],
-    "retrieved_standards": [
-      "IS 2046: 1995"
-    ],
-    "latency_seconds": 0.045
-  },
-  {
-    "id": "Q-162",
-    "query": "We supply phenolic laminated sheets for electrical and structural applications. Is there a separate standard from the decorative laminate standard?",
-    "expected_standards": [
-      "IS 2036: 1995"
-    ],
-    "retrieved_standards": [
-      "IS 2036: 1995",
-      "IS 2046: 1995"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-163",
-    "query": "Our plant makes dust-pressed ceramic tiles with water absorption greater than 10% for wall tiling. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 13753: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 13754: 1993",
-      "IS 13756: 1993",
-      "IS 13753: 1993"
-    ],
-    "latency_seconds": 0.046
-  },
-  {
-    "id": "Q-164",
-    "query": "We manufacture dust-pressed ceramic tiles with low water absorption (less than 3%) for exterior flooring. Which standard applies?",
-    "expected_standards": [
-      "IS 13755: 1993"
-    ],
-    "retrieved_standards": [
-      "IS 13754: 1993",
-      "IS 13756: 1993"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-165",
-    "query": "Our company supplies rotational moulded polyethylene water storage tanks for domestic use. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 12701: 1996"
-    ],
-    "retrieved_standards": [
-      "IS 12701: 1996"
-    ],
-    "latency_seconds": 0.042
-  },
-  {
-    "id": "Q-166",
-    "query": "We manufacture GRP (Glass Reinforced Plastics) pipes for use with potable water. Which standard applies versus GRP sewerage pipes?",
-    "expected_standards": [
-      "IS 12709: 1994"
-    ],
-    "retrieved_standards": [
-      "IS 14402: 1996",
-      "IS 12709: 1994"
-    ],
-    "latency_seconds": 0.046
-  },
-  {
-    "id": "Q-167",
-    "query": "Our factory produces high density polyethylene (HDPE) pipes specifically for sewage and drainage applications. Which standard is relevant?",
-    "expected_standards": [
-      "IS 14333: 1996"
-    ],
-    "retrieved_standards": [
-      "IS 4984: 1995",
-      "IS 14333: 1996",
-      "IS 8360 (Part 1): 1977"
-    ],
-    "latency_seconds": 0.059
-  },
-  {
-    "id": "Q-168",
-    "query": "We supply unplasticised PVC (UPVC) pipes for soil and waste discharge systems inside buildings. Which BIS standard covers this?",
-    "expected_standards": [
-      "IS 13592: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 13592: 1992",
-      "IS 14735: 1999"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-169",
-    "query": "Our company makes cast iron rainwater pipes and fittings for external drainage from roofs. Which standard applies?",
-    "expected_standards": [
-      "IS 1230: 1979"
-    ],
-    "retrieved_standards": [
-      "IS 1230: 1979",
-      "IS 1626 (Part 1): 1994"
-    ],
-    "latency_seconds": 0.045
-  },
-  {
-    "id": "Q-170",
-    "query": "We manufacture sluice valves in the 50-1200mm size range for waterworks applications. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 14846: 2000"
-    ],
-    "retrieved_standards": [
-      "IS 14846: 2000"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-171",
-    "query": "A tender specifies prefabricated brick panel systems with partial precast joists for floor construction. Which BIS standard covers this composite system?",
+    "id": "PUB-100",
+    "query": "Our company is starting production of prefabricated brick panels and partially precast concrete joists for flooring and roofing. What standard applies?",
     "expected_standards": [
       "IS 14143: 1994"
     ],
     "retrieved_standards": [
-      "IS 14143: 1994"
+      "IS 14143: 1994",
+      "IS 13990: 1994"
     ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-172",
-    "query": "We produce specials (fittings like bends and tees) for steel cylinder reinforced concrete pipe systems. Which standard governs these fittings?",
-    "expected_standards": [
-      "IS 7322: 1985"
-    ],
-    "retrieved_standards": [
-      "IS 7322: 1985"
-    ],
-    "latency_seconds": 0.066
-  },
-  {
-    "id": "Q-173",
-    "query": "Our plant makes stainless steel sinks for domestic kitchen use. Which BIS standard defines the dimensions and grade requirements?",
-    "expected_standards": [
-      "IS 13983: 1994"
-    ],
-    "retrieved_standards": [
-      "IS 13983: 1994",
-      "IS 771 (Part 2): 1985"
-    ],
-    "latency_seconds": 0.069
-  },
-  {
-    "id": "Q-174",
-    "query": "We manufacture collapsible metal gates for garages and industrial shutter applications. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 10521: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 10521: 1983",
-      "IS 15491: 2004",
-      "IS 1038: 1983"
-    ],
-    "latency_seconds": 0.054
-  },
-  {
-    "id": "Q-175",
-    "query": "Our company makes steel sliding shutters for shop fronts and warehouses. Which standard applies?",
-    "expected_standards": [
-      "IS 10451: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 10451: 1983"
-    ],
-    "latency_seconds": 0.029
-  },
-  {
-    "id": "Q-176",
-    "query": "We supply unit weights of building materials needed for structural dead load calculations. Which standard provides these reference values?",
-    "expected_standards": [
-      "IS 875 (Part 1): 1987"
-    ],
-    "retrieved_standards": [
-      "IS 875 (Part 1): 1987",
-      "IS 14772: 2000"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-177",
-    "query": "I need to know the dead load from our proposed masonry wall for structural design purposes. Which BIS standard tabulates unit weights of common building materials?",
-    "expected_standards": [
-      "IS 875 (Part 1): 1987"
-    ],
-    "retrieved_standards": [
-      "IS 875 (Part 1): 1987",
-      "IS 2185 (Part 1): 1979"
-    ],
-    "latency_seconds": 0.072
-  },
-  {
-    "id": "Q-178",
-    "query": "We supply putty for glazing metal window frames. Which BIS standard governs the composition and performance of this product?",
-    "expected_standards": [
-      "IS 419: 1967"
-    ],
-    "retrieved_standards": [
-      "IS 419: 1967",
-      "IS 3709: 1966"
-    ],
-    "latency_seconds": 0.048
-  },
-  {
-    "id": "Q-179",
-    "query": "Our company produces mastic cement specifically for bedding metal windows into masonry openings. Which standard is applicable?",
-    "expected_standards": [
-      "IS 3709: 1966"
-    ],
-    "retrieved_standards": [
-      "IS 3709: 1966"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-180",
-    "query": "We manufacture wood filler sold as plastic wood for joinery finishing. Which BIS standard covers this product?",
-    "expected_standards": [
-      "IS 423: 1961"
-    ],
-    "retrieved_standards": [
-      "IS 423: 1961",
-      "IS 849: 1994"
-    ],
-    "latency_seconds": 0.049
-  },
-  {
-    "id": "Q-181",
-    "query": "Our plant produces uncoated stress-relieved low-relaxation seven-ply strands for prestressed concrete applications. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 14268: 1995"
-    ],
-    "retrieved_standards": [
-      "IS 14268: 1995",
-      "IS 6006: 1983"
-    ],
-    "latency_seconds": 0.053
-  },
-  {
-    "id": "Q-182",
-    "query": "We need to certify our hard drawn steel wire used as prestressing tendons in prestressed concrete. Which BIS standard governs this?",
-    "expected_standards": [
-      "IS 1785 (Part 1): 1983"
-    ],
-    "retrieved_standards": [
-      "IS 1785 (Part 1): 1983",
-      "IS 784: 2001",
-      "IS 1785 (Part 2): 1983"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-183",
-    "query": "Our company makes high-tensile steel wire bars used for post-tensioned prestressing systems. Which standard is relevant?",
-    "expected_standards": [
-      "IS 2090: 1983"
-    ],
-    "retrieved_standards": [
-      "IS 2090: 1983",
-      "IS 432 (Part 1): 1982",
-      "IS 784: 2001"
-    ],
-    "latency_seconds": 0.044
-  },
-  {
-    "id": "Q-184",
-    "query": "We supply GRP (glass reinforced plastics) pipes for sewerage and industrial effluent discharge. Which BIS standard applies, separate from the potable water version?",
-    "expected_standards": [
-      "IS 14402: 1996"
-    ],
-    "retrieved_standards": [
-      "IS 14402: 1996",
-      "IS 12709: 1994"
-    ],
-    "latency_seconds": 0.059
-  },
-  {
-    "id": "Q-185",
-    "query": "Our plant manufactures laminated veneer lumber (LVL) as an engineered wood product for structural beams. Which BIS standard covers this?",
-    "expected_standards": [
-      "IS 14616: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 14616: 1999"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-186",
-    "query": "We produce bamboo mat corrugated sheets as an eco-friendly roofing material. Which BIS standard governs this product?",
-    "expected_standards": [
-      "IS 15476: 2004"
-    ],
-    "retrieved_standards": [
-      "IS 15476: 2004",
-      "IS 13958: 1994"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-187",
-    "query": "Our company makes high-strength structural nuts to pair with high-strength structural bolts. Is there a dedicated standard for these nuts?",
-    "expected_standards": [
-      "IS 6623: 2004"
-    ],
-    "retrieved_standards": [
-      "IS 6623: 2004",
-      "IS 6649: 1985"
-    ],
-    "latency_seconds": 0.037
-  },
-  {
-    "id": "Q-188",
-    "query": "A project requires flush doors with plywood face for exterior (moisture-resistant) use. Is the standard different from interior flush doors?",
-    "expected_standards": [
-      "IS 2202 (Part 2): 1983"
-    ],
-    "retrieved_standards": [
-      "IS 2191 (Part 1): 1983",
-      "IS 2202 (Part 1): 1999",
-      "IS 5539: 1969"
-    ],
-    "latency_seconds": 0.066
-  },
-  {
-    "id": "Q-189",
-    "query": "We make moulded high-density fibre (HDF) panel doors with raised profiles. Which BIS standard covers this engineered door product?",
-    "expected_standards": [
-      "IS 15380: 2003"
-    ],
-    "retrieved_standards": [
-      "IS 15380: 2003"
-    ],
-    "latency_seconds": 0.055
-  },
-  {
-    "id": "Q-190",
-    "query": "Our factory produces medium-density coirboards for general construction panels using coir fibres. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 15491: 2004"
-    ],
-    "retrieved_standards": [
-      "IS 15491: 2004",
-      "IS 13958: 1994"
-    ],
-    "latency_seconds": 0.052
-  },
-  {
-    "id": "Q-191",
-    "query": "We supply coir veneer boards where coir mat is bonded to a timber core for wall paneling. Which BIS standard governs this product?",
-    "expected_standards": [
-      "IS 14842: 2000"
-    ],
-    "retrieved_standards": [
-      "IS 13958: 1994",
-      "IS 14842: 2000",
-      "IS 14912: 2001"
-    ],
-    "latency_seconds": 0.059
-  },
-  {
-    "id": "Q-192",
-    "query": "Our company produces bamboo mat veneer composite boards for furniture and construction purposes. Which BIS standard is applicable?",
-    "expected_standards": [
-      "IS 14588: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 14588: 1999",
-      "IS 13958: 1994"
-    ],
-    "latency_seconds": 0.045
-  },
-  {
-    "id": "Q-193",
-    "query": "We make UPVC screens and casing pipes used for borewells and tubewells. Which BIS standard governs these products?",
-    "expected_standards": [
-      "IS 12818: 1992"
-    ],
-    "retrieved_standards": [
-      "IS 12818: 1992",
-      "IS 13592: 1992",
-      "IS 4985: 2000",
-      "IS 738: 1994"
-    ],
-    "latency_seconds": 0.051
-  },
-  {
-    "id": "Q-194",
-    "query": "Our plant manufactures UPVC injection-moulded fittings for soil and waste discharge systems. Which standard is applicable?",
-    "expected_standards": [
-      "IS 14735: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 14735: 1999"
-    ],
-    "latency_seconds": 0.037
-  },
-  {
-    "id": "Q-195",
-    "query": "We supply resilient air release valves for water distribution networks, made of cast iron. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 14845: 2000"
-    ],
-    "retrieved_standards": [
-      "IS 14845: 2000",
-      "IS 13349: 1992"
-    ],
-    "latency_seconds": 0.062
-  },
-  {
-    "id": "Q-196",
-    "query": "Our company manufactures metal-faced plywood, which has a thin metal sheet bonded to a plywood core. Which standard covers this composite panel?",
-    "expected_standards": [
-      "IS 13957: 1994"
-    ],
-    "retrieved_standards": [
-      "IS 13957: 1994"
-    ],
-    "latency_seconds": 0.06
-  },
-  {
-    "id": "Q-197",
-    "query": "We produce polymethyl methacrylate (PMMA) or acrylic sheets for skylights and transparent cladding. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 14753: 1999"
-    ],
-    "retrieved_standards": [
-      "IS 14753: 1999"
-    ],
-    "latency_seconds": 0.047
-  },
-  {
-    "id": "Q-198",
-    "query": "Our factory makes elastomer insulated cables for flexible and fixed wiring in buildings. Which Part of IS 9968 is applicable for low-voltage versions?",
-    "expected_standards": [
-      "IS 9968 (Part 1): 1988"
-    ],
-    "retrieved_standards": [
-      "IS 9968 (Part 1): 1998"
-    ],
-    "latency_seconds": 0.062
-  },
-  {
-    "id": "Q-199",
-    "query": "We produce fittings for rigid non-metallic (PVC) conduits such as bends, couplings, and junction boxes. Which BIS standard governs these fittings?",
-    "expected_standards": [
-      "IS 3419: 1989"
-    ],
-    "retrieved_standards": [
-      "IS 3419: 1989"
-    ],
-    "latency_seconds": 0.066
-  },
-  {
-    "id": "Q-200",
-    "query": "Our company manufactures high-density polyethylene films for use as vapour barriers and damp-proof membranes in building construction. Which BIS standard applies?",
-    "expected_standards": [
-      "IS 10889: 1984"
-    ],
-    "retrieved_standards": [
-      "IS 10889: 1984",
-      "IS 2508: 1984",
-      "IS 14443: 1997"
-    ],
-    "latency_seconds": 0.058
+    "latency_seconds": 0.115
   }
 ]
