@@ -35,12 +35,12 @@ class BISRetriever:
     def _load_models_if_needed(self):
         self.reranker.load()
 
-    def _dense_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
+    def _dense_retrieve(self, query: str, top_k: int = 5) -> List[Tuple[int, float]]:
         query_embed     = self.encoder.encode([query], is_query=True)
         scores, indices = self.index_store.faiss_index.search(query_embed, top_k)
         return list(zip(indices[0].tolist(), scores[0].tolist()))
 
-    def _sparse_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
+    def _sparse_retrieve(self, query: str, top_k: int = 5) -> List[Tuple[int, float]]:
         tokens      = tokenize(query)
         scores      = self.index_store.bm25.get_scores(tokens)
         top_indices = np.argsort(scores)[::-1][:top_k]
@@ -80,12 +80,12 @@ class BISRetriever:
 
         # Step 3 — Dense retrieval
         t2 = time.time()
-        dense_res = self._dense_retrieve(expanded_query, top_k=20)
+        dense_res = self._dense_retrieve(expanded_query, top_k=10)
         timings["dense_retrieval"] = time.time() - t2
 
         # Step 4 — Sparse retrieval
         t3 = time.time()
-        sparse_res = self._sparse_retrieve(expanded_query, top_k=20)
+        sparse_res = self._sparse_retrieve(expanded_query, top_k=10)
         timings["sparse_retrieval"] = time.time() - t3
 
         # Step 5 — Fusion
