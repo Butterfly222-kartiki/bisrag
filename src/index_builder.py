@@ -46,7 +46,7 @@ EMBEDDING_MODE = "local_fast"   # "local_fast" | "local_large" | "hf_api"
 
 # Maps each mode to its HuggingFace model ID.
 EMBED_MODELS = {
-    "local_fast":  "BAAI/bge-small-en-v1.5",   # 384-dim, ~3× faster, ~1% quality drop
+    "local_fast":  "all-MiniLM-L6-v2",   # 384-dim, ~3× faster, ~1% quality drop
     "local_large": "BAAI/bge-large-en-v1.5",   # 1024-dim, original quality
     "hf_api":      "BAAI/bge-large-en-v1.5",   # same model, runs on HF servers
 }
