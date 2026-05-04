@@ -4,23 +4,7 @@ reranker.py
 Takes the fused candidate list produced by RRF and scores each (query, passage)
 pair with a CrossEncoder, returning only the top-k results.
 
-Why a separate reranker stage?
-    Dense + sparse retrieval casts a wide net (top-20 from each).  The reranker
-    acts as a precision filter: it reads the full query and passage together and
-    produces a relevance score that is far more accurate than embedding cosine
-    similarity alone, at the cost of higher latency.  Running it only on the
-    top-20 fused candidates keeps the latency acceptable.
 
-Reranker modes (set RERANKER_MODE below to switch):
-    "local_small"  →  cross-encoder/ms-marco-MiniLM-L-6-v2  (~50 MB, fast, good enough)
-    "local_large"  →  BAAI/bge-reranker-large                (best quality, slow)
-    "groq"         →  Groq LLM used as a reranker            (no local model needed)
-    "none"         →  skip reranking entirely                 (fastest, lowest quality)
-
-Public surface used by retriever.py:
-    RERANKER_MODE    — current mode constant (read by retriever for lazy-loading)
-    RERANKER_MODELS  — mode → model-id mapping
-    Reranker         — wrapper class; call load() then rerank()
 """
 
 from typing import List, Dict, Optional

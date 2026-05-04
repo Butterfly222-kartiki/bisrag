@@ -34,26 +34,33 @@ from typing import List, Dict, Any, Optional
 # larger models is minimal and the latency savings are significant.
 GROQ_MODEL = "llama-3.1-8b-instant"
 
-# System persona: BIS compliance expert speaking to small business owners.
-# "Concise and practical" keeps rationales tight (1–2 sentences).
+# System persona: senior BIS compliance consultant, not a generic assistant.
 SYSTEM_PROMPT = (
-    "You are a BIS (Bureau of Indian Standards) compliance expert helping "
-    "Micro and Small Enterprises (MSEs) understand which standards apply to their products. "
-    "Be concise, practical, and friendly. Focus on why each standard matters to the business."
+    "You are a senior BIS (Bureau of Indian Standards) compliance consultant with 15+ years of "
+    "experience helping Micro and Small Enterprises (MSEs) navigate Indian standards. "
+    "Your explanations are clear, specific, and business-focused — you always explain WHAT the "
+    "standard requires and WHY it directly applies to the product or activity described in the query. "
+    "Never write vague filler like 'this standard applies to your product'. Instead, mention the "
+    "specific technical aspect (material, test method, safety requirement, marking, etc.) that makes "
+    "the standard relevant."
 )
 
-# The user-turn prompt template.  {query} and {standards_block} are filled in
-# by generate_rationales() before sending to the API.
+# Improved prompt: asks for structured, specific rationales with concrete details.
 RATIONALE_PROMPT_TEMPLATE = """\
-A business asked: "{query}"
+A business owner asked: "{query}"
 
-The following BIS standards were identified as relevant:
+These BIS standards were retrieved as potentially relevant:
 {standards_block}
 
-For each standard, provide a brief 1-2 sentence rationale explaining why it is relevant \
-to the query. Return ONLY a JSON array in this exact format, no markdown, no extra text:
+For EACH standard above, write a rationale (5-7 sentences) that:
+1. Names the specific product category, process, or material the standard governs.
+2. Explains exactly which clause or aspect makes it relevant to the query (e.g., testing method, \
+material grade, safety marking, packaging requirement).
+3. States the concrete business impact — certification needed, compliance deadline, or quality benefit.
+
+Return ONLY a valid JSON array — no markdown fences, no preamble, no trailing text:
 [
-  {{"standard_id": "IS XXX: YYYY", "rationale": "..."}},
+  {{"standard_id": "IS XXX: YYYY", "rationale": "...2-3 sentences..."}},
   ...
 ]
 """
@@ -77,15 +84,17 @@ def _build_standards_block(standards: List[Dict]) -> str:
 def _fallback_rationale(std: Dict, query: str) -> str:
     """
     Template-based rationale used when the Groq call is unavailable or fails.
-
-    Not as informative as an LLM response, but better than returning a blank
-    field that would confuse the end user.
+    More informative than a blank field; mentions the standard's own title.
     """
     title = std.get("title", "this standard")
     sid   = std.get("standard_id", "")
+    text_snippet = std.get("text", "")[:120].strip()
+    detail = f" It covers: {text_snippet}..." if text_snippet else ""
     return (
-        f"{sid} covers {title}. This standard is relevant to your query "
-        f"as it defines the technical requirements and specifications applicable to your product."
+        f"{sid} specifies requirements for {title}."
+        f" This standard is directly relevant because it defines the technical "
+        f"specifications, testing methods, and quality benchmarks applicable to your product or process."
+        f"{detail}"
     )
 
 
@@ -143,8 +152,8 @@ def generate_rationales(
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user",   "content": prompt},
             ],
-            max_tokens=1024,
-            temperature=0.2,   # Small amount of creativity; rationales benefit from it.
+            max_tokens=2048,   
+            temperature=0.15,  
         )
 
         text = response.choices[0].message.content.strip()

@@ -1,17 +1,17 @@
 """
-BIS SP 21 Parser — Updated for Pre-Generated Chunks
-=====================================================
-CHANGES FROM ORIGINAL:
-  - parse_pdf() replaced with load_from_chunks_json(): skips all PDF/PyMuPDF/pdfplumber
-    logic since chunks are already generated in bis_all_chunks_fixed.json.
-  - normalize_standard_id FIXED (Fix 1):
-      Old: only handled [Pp]art — missed PART, PARTII, (PART1), roman numerals.
-      New: fully case-insensitive PART, converts roman numerals (I->1, II->2 ...),
-           handles missing space before digit e.g. (PART1) -> (Part 1),
-           handles (PART N/SEC M) variants.
-  - load_from_chunks_json re-normalizes every standard_id from the JSON so
-    parent_map keys always match eval script expectations exactly.
-  - save_chunks / load_chunks unchanged.
+BIS SP 21 Parser
+================
+Parses BIS standards data from either a pre-generated chunks JSON file or
+directly from the raw SP 21 PDF, then produces parent and child chunks ready
+for indexing.
+
+
+Usage (original PDF flow -- requires PyMuPDF or pdfplumber):
+    python parser.py --pdf path/to/bis_sp21.pdf
+
+Output (saved to --output, default data/chunks.json):
+    parent_chunks  -- one chunk per standard, used for retrieval context
+    child_chunks   -- sliding-window sub-chunks, used for dense search
 """
 
 import re
@@ -33,7 +33,7 @@ except ImportError:
     PDFPLUMBER_AVAILABLE = False
 
 
-# ── Regex / Constants ──────────────────────────────────────────────────────────
+# -- Regex / Constants ---------------------------------------------------------
 
 IS_HEADING_PATTERN = re.compile(
     r'\b(IS\s+\d+(?:\s*\(Part\s*\d+\))?(?:\s*\(Sec\s*\d+\))?'
@@ -55,6 +55,8 @@ INLINE_CITATION_INDICATORS = [
     'given in', 'listed in', 'covered in', 'conforming to',
 ]
 
+# Covers the range of roman numerals realistically found in BIS part numbers,
+# for example (Part II) -> (Part 2), (Part IV) -> (Part 4).
 _ROMAN = {
     'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5,
     'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10,
@@ -62,24 +64,28 @@ _ROMAN = {
 }
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+# -- Helpers -------------------------------------------------------------------
 
 def normalize_standard_id(raw: str) -> str:
     """
-    Canonical form: 'IS 269: 1989', 'IS 1489 (Part 1): 1991'.
+    Converts any raw standard ID string into a consistent canonical form
+    so that IDs match across the parser, index, and eval script.
 
-    Fix 1 changes vs original:
-      - Fully case-insensitive PART (was [Pp]art, missed 'PART').
-      - Converts roman numerals to digits: (PART II) -> (Part 2).
-      - Handles no-space variant: (PART1) -> (Part 1).
-      - Handles (PART N/SEC M) variants before generic Part rule.
+    Examples of what gets normalized:
+        'IS269:1989'        -> 'IS 269: 1989'
+        'IS 1489(PART1)'    -> 'IS 1489 (Part 1)'
+        'IS 456 (PART II)'  -> 'IS 456 (Part 2)'
+        'IS 800(PART1/SEC2) -> 'IS 800 (Part 1/Sec 2)'
     """
     s = re.sub(r'\s+', ' ', raw.strip())
     s = re.sub(r'\s*:\s*', ': ', s)
-    # Fix missing space between IS number and opening paren: IS 9537(Part -> IS 9537 (Part
+
+    # Some source IDs omit the space between the number and the opening
+    # parenthesis. Insert it so subsequent patterns match consistently.
     s = re.sub(r'(IS\s*\d+)(\()', r'\1 \2', s)
 
-    # Handle (PART N / SEC M) variants first
+    # Compound part/section variants like (PART 2/SEC 1) must be handled before
+    # the simpler (PART N) rule so they are not partially matched.
     def fix_part_sec(m):
         pn = _ROMAN.get(m.group(1).strip().upper(), m.group(1).strip())
         sn = _ROMAN.get(m.group(2).strip().upper(), m.group(2).strip())
@@ -90,7 +96,7 @@ def normalize_standard_id(raw: str) -> str:
         fix_part_sec, s
     )
 
-    # Handle plain (PART N)
+    # Normalize plain (PART N), converting any roman numeral to an integer.
     def fix_part(m):
         inner = m.group(1).strip()
         num   = _ROMAN.get(inner.upper(), inner)
@@ -101,6 +107,8 @@ def normalize_standard_id(raw: str) -> str:
 
 
 def is_toc_title(title: str) -> bool:
+    # Titles that are very long or contain inline IS-number references are
+    # almost certainly table-of-contents lines rather than real section headings.
     if len(title) > TOC_TITLE_MAX_LEN:
         return True
     if TOC_INLINE_PATTERN.search(title):
@@ -109,13 +117,18 @@ def is_toc_title(title: str) -> bool:
 
 
 def is_real_heading(line: str, match: re.Match) -> bool:
+    # Headings appear at or very near the start of a line. A match that begins
+    # well into the line is most likely an inline citation, not a heading.
     if match.start() > 10:
         return False
+    # Very long lines are almost always body text with an embedded reference.
     if len(line) > 160:
         return False
     after = line[match.end():].strip()
     if after and not re.search(r'[A-Za-z]{2,}', after):
         return False
+    # If the text after the ID reads like a citation phrase, treat the whole
+    # line as body text and skip it.
     after_lower = after.lower()
     if any(ind in after_lower for ind in INLINE_CITATION_INDICATORS):
         return False
@@ -123,10 +136,13 @@ def is_real_heading(line: str, match: re.Match) -> bool:
 
 
 def clean_toc_title_suffix(title: str) -> str:
-    return re.sub(r'\s+\d+(\.\d+)?\s*$', '', title).strip(" —:-")
+    # Strip trailing page numbers that bleed in from table-of-contents lines.
+    return re.sub(r'\s+\d+(\.\d+)?\s*$', '', title).strip(" --:-")
 
 
 def _dedup_keep_longest(chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    # When multiple chunks share the same standard ID, keep only the one with
+    # the most text. Stubs that are too short to be useful are also dropped here.
     best: Dict[str, Dict] = {}
     for chunk in chunks:
         sid = chunk["standard_id"]
@@ -140,12 +156,19 @@ def _dedup_keep_longest(chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 def create_child_chunks(parent_chunks: List[Dict]) -> List[Dict]:
-    """Sliding-window child chunks with standard_id/title context prefix."""
+    """
+    Produces sliding-window child chunks from each parent chunk.
+
+    Each child window is prefixed with the standard ID, title, and category so
+    that a dense search on child chunks still carries enough context to identify
+    the parent standard without needing a separate lookup.
+    """
     children = []
     for parent in parent_chunks:
-        sid   = parent["standard_id"]
-        title = parent.get("title", "")
-        text  = parent["text"]
+        sid      = parent["standard_id"]
+        title    = parent.get("title", "")
+        text     = parent["text"]
+        category = parent.get("category", "")
 
         raw_sentences = re.split(r'(?<=[.!?])\s+', text)
         sentences = [s.strip() for s in raw_sentences if len(s.strip()) >= MIN_SENTENCE_LEN]
@@ -155,6 +178,8 @@ def create_child_chunks(parent_chunks: List[Dict]) -> List[Dict]:
         context_prefix = f"Standard: {sid}"
         if title:
             context_prefix += f" -- {title}"
+        if category:
+            context_prefix += f" [Category: {category}]"
         context_prefix += ". "
 
         i = 0
@@ -179,22 +204,22 @@ def create_child_chunks(parent_chunks: List[Dict]) -> List[Dict]:
     return children
 
 
-# ── Load from pre-generated chunks JSON ───────────────────────────────────────
+# -- Load from pre-generated chunks JSON ---------------------------------------
 
 def load_from_chunks_json(chunks_path: str) -> Dict[str, List[Dict]]:
     """
-    Replaces parse_pdf() when chunks are already generated.
+    Loads chunks from a pre-generated JSON file instead of parsing the PDF.
 
-    Reads bis_all_chunks_fixed.json, maps fields to parent/child schema,
-    applies fixed normalize_standard_id to every chunk so parent_map keys
-    match eval script expectations, then generates sliding-window child chunks.
+    This is the recommended path because the JSON has already gone through
+    extraction and cleaning, so it is faster and does not require any PDF
+    processing dependencies.
 
-    Field mapping:
-        content   -> text         (renamed — embed this field)
-        standard_id -> standard_id (re-normalized)
-        category  -> category     (preserved as metadata)
-        (absent)  -> page_number  (None)
-        (absent)  -> chunk_type   ("parent")
+    Field mapping applied when reading from the JSON:
+        content     -> text         (renamed -- this is the field that gets embedded)
+        standard_id -> standard_id  (re-normalized to canonical form)
+        category    -> category     (preserved as metadata)
+        page_number -> page_number  (None if absent)
+        chunk_type  -> "parent"     (all loaded chunks are treated as parents)
     """
     print(f"[Parser] Loading pre-generated chunks from: {chunks_path}")
     with open(chunks_path, encoding="utf-8") as f:
@@ -205,7 +230,6 @@ def load_from_chunks_json(chunks_path: str) -> Dict[str, List[Dict]]:
 
     parent_chunks: List[Dict[str, Any]] = []
     for item in raw_list:
-        # Fix 1: re-normalize every standard_id with the corrected function
         sid = normalize_standard_id(
             item.get("standard_id", item.get("standard_number", ""))
         )
@@ -241,10 +265,10 @@ def load_from_chunks_json(chunks_path: str) -> Dict[str, List[Dict]]:
     }
 
 
-# ── Original PDF path (kept intact) ───────────────────────────────────────────
+# -- PDF path ------------------------------------------------------------------
 
 def extract_text_pymupdf(pdf_path: str) -> List[Dict]:
-    doc = fitz.open(pdf_path)
+    doc   = fitz.open(pdf_path)
     lines = []
     for page_num, page in enumerate(doc):
         blocks = page.get_text("dict")["blocks"]
@@ -271,6 +295,9 @@ def extract_text_pdfplumber(pdf_path: str) -> List[str]:
 
 
 def _segment_lines_to_chunks(lines: List[Dict]) -> List[Dict[str, Any]]:
+    # Walk through every line in the document. When we spot a line that looks
+    # like an IS standard heading, flush whatever we have been accumulating for
+    # the previous standard and start a new chunk.
     chunks = []
     current_std_id: Optional[str] = None
     current_title: Optional[str]  = None
@@ -314,6 +341,8 @@ def _segment_lines_to_chunks(lines: List[Dict]) -> List[Dict[str, Any]]:
         else:
             if current_std_id is None:
                 continue
+            # If we have not captured a title yet and this line looks short
+            # enough to be one, treat it as the title rather than body text.
             if current_title is None and len(text) < 120 and not text.endswith("."):
                 current_title = text
             else:
@@ -324,6 +353,12 @@ def _segment_lines_to_chunks(lines: List[Dict]) -> List[Dict[str, Any]]:
 
 
 def parse_pdf(pdf_path: str) -> Dict[str, List[Dict]]:
+    """
+    Parses the raw SP 21 PDF into parent and child chunks.
+
+    Tries PyMuPDF first for better layout fidelity, then falls back to
+    pdfplumber if PyMuPDF is not installed or raises an error.
+    """
     print(f"[Parser] Loading PDF: {pdf_path}")
     raw_chunks: List[Dict] = []
 
@@ -357,7 +392,7 @@ def parse_pdf(pdf_path: str) -> Dict[str, List[Dict]]:
     return {"parent_chunks": unique_parents, "child_chunks": child_chunks}
 
 
-# ── I/O helpers ────────────────────────────────────────────────────────────────
+# -- I/O helpers ---------------------------------------------------------------
 
 def save_chunks(chunks_data: Dict, output_path: str):
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
@@ -371,15 +406,15 @@ def load_chunks(path: str) -> Dict:
         return json.load(f)
 
 
-# ── CLI ────────────────────────────────────────────────────────────────────────
+# -- CLI -----------------------------------------------------------------------
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="BIS SP21 Parser")
     group = ap.add_mutually_exclusive_group(required=True)
     group.add_argument("--chunks", metavar="JSON_PATH",
-                       help="Path to pre-generated chunks JSON (bis_all_chunks_fixed.json)")
+                       help="Path to pre-generated chunks JSON (recommended)")
     group.add_argument("--pdf", metavar="PDF_PATH",
-                       help="Path to raw SP21 PDF (original flow)")
+                       help="Path to raw SP21 PDF")
     ap.add_argument("--output", default="data/chunks.json",
                     help="Output path (default: data/chunks.json)")
     args = ap.parse_args()

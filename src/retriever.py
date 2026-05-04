@@ -1,29 +1,35 @@
 """
-retriever.py
-============
-Core retrieval logic for the BIS RAG pipeline.
+BIS Hybrid Retrieval Pipeline
 
-Orchestrates the full retrieve() call:
+This module implements an optimized hybrid retrieval system for BIS (Bureau of Indian Standards)
+documents using a combination of dense and sparse retrieval techniques, followed by intelligent
+fusion and reranking.
 
-    1. Query preprocessing  — relevance check + expansion  (query_preprocessor.py)
-    2. Dense retrieval      — FAISS inner-product search over BGE embeddings
-    3. Sparse retrieval     — BM25Okapi keyword search
-    4. Fusion               — Reciprocal Rank Fusion (RRF) combines both lists
-    5. Reranking            — CrossEncoder precision filter              (reranker.py)
-    6. Deduplication        — one result per standard_id, hydrated from parent_map
+Key Features:
+- Query preprocessing with relevance filtering and expansion (LLM-assisted)
+- Hybrid retrieval:
+    • Dense retrieval using FAISS + embeddings
+    • Sparse retrieval using BM25
+- Reciprocal Rank Fusion (RRF) for combining retrieval results
+- Part-number aware filtering for standards (e.g., IS XXXX Part 1, Part 2)
+- Optional reranking layer for improved result relevance
+- Efficient deduplication and parent-document mapping
+- Detailed timing breakdown for performance monitoring
 
-Dependencies:
-    index_builder.py      — EmbeddingEncoder, IndexStore, tokenize
-    query_preprocessor.py — check_relevance_and_expand_query, IrrelevantQueryError
-    reranker.py           — Reranker
+Pipeline Overview:
+1. Query relevance check and expansion
+2. Dense retrieval (semantic similarity)
+3. Sparse retrieval (keyword matching)
+4. Fusion of results (RRF)
+5. Candidate construction with metadata enrichment
+6. Part-number based prioritization
+7. Deduplication and final result selection
 
-Public surface used by pipeline.py and api.py:
-    BISRetriever          — main class; call load_index() then retrieve()
-    get_retriever()       — module-level singleton accessor
-    IrrelevantQueryError  — re-exported so callers need only one import
 """
 
 import os
+import re
+import time
 from typing import List, Dict, Any, Tuple, Optional
 
 import numpy as np
@@ -33,77 +39,75 @@ from src.query_preprocessor import check_relevance_and_expand_query, IrrelevantQ
 from src.reranker import Reranker
 
 
+# ── Part-number helpers  ────────────────────────────
+
+def extract_part_number(standard_id: str) -> Optional[int]:
+    """
+    Extracts part number from strings like:
+      'IS 1234 Part 2', 'IS 456-2', 'IS 789 (Part-1)', 'is1234part3'
+    Returns int (1, 2, 3) or None if no part mentioned.
+    """
+    match = re.search(r'part[\s\-]?(\d+)', standard_id, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    # Handle hyphenated form: IS 456-2
+    match = re.search(r'-(\d+)$', standard_id.strip())
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def extract_part_signal_from_query(query: str) -> Optional[int]:
+    """
+    Extracts explicit part number from query string.
+    Handles: 'part 2', 'part-2', 'part ii', 'part2'
+    Returns int or None.
+    """
+    # Arabic numerals: part 2, part-2, part2
+    match = re.search(r'part[\s\-]?(\d+)', query, re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    # Roman numerals up to part IV
+    roman = {"i": 1, "ii": 2, "iii": 3, "iv": 4}
+    match = re.search(r'part[\s\-]?(iv|iii|ii|i)\b', query, re.IGNORECASE)
+    if match:
+        return roman.get(match.group(1).lower())
+    return None
+
+
+
 class BISRetriever:
-    """
-    Full retrieval pipeline: relevance-check -> dense+sparse -> RRF -> rerank.
-
-    Typical lifecycle:
-        retriever = BISRetriever(groq_api_key="...")
-        retriever.load_index()                  # once, at startup
-        results = retriever.retrieve(query)     # per request
-    """
-
     def __init__(self, groq_api_key: Optional[str] = None):
         self.groq_api_key = groq_api_key or os.environ.get("GROQ_API_KEY", "")
 
-        # All three sub-components are lazy — nothing heavy loads at construction.
         self.encoder     = EmbeddingEncoder()
         self.index_store = IndexStore(self.encoder)
         self.reranker    = Reranker()
-
-    # ---- Property shim so api.py pre-warm can touch embed_model directly -----
+        self.use_reranker = True
 
     @property
     def embed_model(self):
-        """Expose the underlying SentenceTransformer for external pre-warming."""
         return self.encoder._model
 
     @embed_model.setter
     def embed_model(self, value):
         self.encoder._model = value
 
-    # ---- Index management ---------------------------------------------------
-
     def build_index(self, chunks_data: Dict):
-        """Build and persist a fresh FAISS + BM25 index. Delegates to IndexStore."""
         self.index_store.build(chunks_data)
 
     def load_index(self):
-        """
-        Load pre-built index artefacts from disk into memory.
-        Must be called before retrieve(). Raises FileNotFoundError if the index
-        hasn't been built yet — run build_index.py first.
-        """
         self.index_store.load()
 
     def _load_models_if_needed(self):
-        """
-        Lazy-load the reranker model on the first request that needs it.
-        Delegates to Reranker.load() which is a no-op for "groq" and "none" modes.
-        """
         self.reranker.load()
 
-    # ---- Core retrieval steps -----------------------------------------------
-
-    def _dense_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
-        """
-        FAISS inner-product search over BGE embeddings.
-
-        Returns (chunk_index, score) pairs in descending score order.
-        The BGE query prefix is applied inside encoder.encode(is_query=True).
-        """
+    def _dense_retrieve(self, query: str, top_k: int = 5) -> List[Tuple[int, float]]:
         query_embed     = self.encoder.encode([query], is_query=True)
         scores, indices = self.index_store.faiss_index.search(query_embed, top_k)
         return list(zip(indices[0].tolist(), scores[0].tolist()))
 
-    def _sparse_retrieve(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
-        """
-        BM25 keyword search over the tokenised corpus.
-
-        The query is already expanded by check_relevance_and_expand_query() before
-        this is called, so abbreviations and synonyms are naturally included.
-        Returns (chunk_index, score) pairs in descending score order.
-        """
+    def _sparse_retrieve(self, query: str, top_k: int = 5) -> List[Tuple[int, float]]:
         tokens      = tokenize(query)
         scores      = self.index_store.bm25.get_scores(tokens)
         top_indices = np.argsort(scores)[::-1][:top_k]
@@ -115,18 +119,6 @@ class BISRetriever:
         sparse_results: List[Tuple[int, float]],
         k: int = 60,
     ) -> List[Tuple[int, float]]:
-        """
-        Reciprocal Rank Fusion — merges the dense and sparse ranked lists.
-
-        Each candidate receives a score of 1/(k + rank) from each list it
-        appears in. Scores are summed, so a hit near the top of both lists
-        outranks one that dominates only a single list.
-
-        k=60 is the standard RRF constant; higher values dampen rank influence
-        and make the fusion more conservative.
-
-        Returns candidates sorted by descending RRF score.
-        """
         scores: Dict[int, float] = {}
         for rank, (idx, _) in enumerate(dense_results):
             scores[idx] = scores.get(idx, 0.0) + 1.0 / (k + rank + 1)
@@ -134,58 +126,80 @@ class BISRetriever:
             scores[idx] = scores.get(idx, 0.0) + 1.0 / (k + rank + 1)
         return sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
-    # ---- Public retrieve ----------------------------------------------------
-
     def retrieve(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
-        """
-        End-to-end retrieval: preprocess -> dense+sparse -> RRF -> rerank -> deduplicate.
+        timings = {}
+        t_total_start = time.time()
 
-        Args:
-            query  : Raw user query string.
-            top_k  : Number of unique standards to return.
-
-        Returns:
-            List of dicts with keys: standard_id, title, text, page_number.
-
-        Raises:
-            IrrelevantQueryError : query is a greeting or off-topic.
-                                   Caught by api.py for a friendly response.
-        """
-        # Step 1 — Relevance check + query expansion (single Groq call).
-        # Previously two sequential calls; merged to save ~300-600 ms per request.
+        # Step 1 — Relevance + Expansion
+        t0 = time.time()
         relevant, expanded_query, msg = check_relevance_and_expand_query(
             query, self.groq_api_key
         )
+        timings["preprocess+expand"] = time.time() - t0
+
         if not relevant:
             raise IrrelevantQueryError(msg)
 
-        # Ensure reranker weights are in memory before we start scoring.
+        # Step 2 — Load reranker (lazy)
+        t1 = time.time()
         self._load_models_if_needed()
+        timings["model_load"] = time.time() - t1
 
-        # Steps 2 & 3 — Independent dense and sparse searches on the expanded query.
-        dense_res  = self._dense_retrieve(expanded_query, top_k=20)
-        sparse_res = self._sparse_retrieve(expanded_query, top_k=20)
+        # Step 3 — Dense retrieval
+        t2 = time.time()
+        dense_res = self._dense_retrieve(expanded_query, top_k=10)
+        timings["dense_retrieval"] = time.time() - t2
 
-        # Step 4 — Fuse both ranked lists into one via RRF.
+        # Step 4 — Sparse retrieval
+        t3 = time.time()
+        sparse_res = self._sparse_retrieve(expanded_query, top_k=10)
+        timings["sparse_retrieval"] = time.time() - t3
+
+        # Step 5 — Fusion
+        t4 = time.time()
         fused = self._rrf_fusion(dense_res, sparse_res)
+        timings["fusion"] = time.time() - t4
 
-        # Step 5 — Hydrate chunk metadata from the fused indices.
-        candidates   = []
+        # Step 6 — Candidate building (part_number extracted live from standard_id)
+        t5 = time.time()
+        candidates = []
         seen_indices = set()
-        for idx, score in fused[:5]:
+        for idx, score in fused[:10]:
             if idx < 0 or idx in seen_indices:
                 continue
             seen_indices.add(idx)
             chunk = dict(self.index_store.metadata[idx])
             chunk["rrf_score"] = score
+            # ── Extract part number live — no index rebuild needed ──
+            chunk["part_number"] = extract_part_number(chunk.get("standard_id", ""))
             candidates.append(chunk)
+        timings["candidate_build"] = time.time() - t5
 
-        # Step 6 — Rerank: CrossEncoder precision filter over fused candidates.
-        reranked = self.reranker.rerank(query, candidates, top_k=top_k * 2)
+        # Step 6.5 — Part-number filtering 
+        t_part = time.time()
+        query_part = extract_part_signal_from_query(query)
+        if query_part is not None:
+            part_match = [c for c in candidates if c.get("part_number") == query_part]
+            part_none  = [c for c in candidates if c.get("part_number") is None]
+            part_wrong = [c for c in candidates if c.get("part_number") is not None
+                                                and c.get("part_number") != query_part]
+            # Right part first → reranker sees best candidates at the top
+            # Wrong part kept at the back as a fallback (not discarded)
+            candidates = part_match + part_none + part_wrong
+        timings["part_filter"] = time.time() - t_part
 
-        # Step 7 — Deduplicate by standard_id; hydrate from parent_map for full text.
+        # Step 7 — Reranking
+        t6 = time.time()
+        if self.use_reranker:
+            reranked = self.reranker.rerank(query, candidates, top_k=top_k * 2)
+        else:
+            reranked = candidates
+        timings["rerank"] = time.time() - t6
+
+        # Step 8 — Deduplication
+        t7 = time.time()
         seen_ids = set()
-        results  = []
+        results = []
         for chunk in reranked:
             sid = chunk["standard_id"]
             if sid in seen_ids:
@@ -194,29 +208,29 @@ class BISRetriever:
             parent = self.index_store.parent_map.get(sid, chunk)
             results.append({
                 "standard_id": sid,
-                "title":       parent.get("title",       chunk.get("title",       "")),
-                "text":        parent.get("text",        chunk.get("text",        "")),
+                "title": parent.get("title", chunk.get("title", "")),
+                "text": parent.get("text", chunk.get("text", "")),
                 "page_number": parent.get("page_number", chunk.get("page_number", 0)),
             })
             if len(results) >= top_k:
                 break
+        timings["dedup"] = time.time() - t7
+
+        timings["total"] = time.time() - t_total_start
+
+        # PRINT TIMING BREAKDOWN
+        print("\n⏱ TIMING BREAKDOWN:")
+        for k, v in timings.items():
+            print(f"{k:20s}: {v:.4f} sec")
+        print("-" * 40)
 
         return results
 
-
-# ---------------------------------------------------------------------------
-# Module-level singleton — api.py and pipeline.py share one retriever instance.
-# ---------------------------------------------------------------------------
 
 _retriever_instance: Optional[BISRetriever] = None
 
 
 def get_retriever() -> BISRetriever:
-    """
-    Return the shared BISRetriever, creating and loading it on first call.
-    Thread-safe for single-worker FastAPI. For multi-worker deployments, load
-    the index inside each worker's startup hook instead of using this singleton.
-    """
     global _retriever_instance
     if _retriever_instance is None:
         _retriever_instance = BISRetriever()

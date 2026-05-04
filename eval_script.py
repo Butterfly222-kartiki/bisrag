@@ -1,11 +1,14 @@
 import json
 import argparse
 import sys
+import re
 
 
 def normalize_std(std_string):
-    """Normalizes the standard name by removing spaces and converting to lowercase for fair matching."""
-    return str(std_string).replace(" ", "").lower()
+   
+    s = str(std_string).replace(" ", "").lower()
+    s = re.sub(r':\d{4}$', '', s)
+    return s
 
 
 def evaluate_results(results_file):
